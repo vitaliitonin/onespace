@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Onespace — Personas</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f13;
+      --surface: #1a1a22;
+      --surface2: #22222e;
+      --border: #2e2e3e;
+      --text: #e8e8f0;
+      --muted: #6060a0;
+      --accent: #e8a020;
+      --blue: #5b8af0;
+      --green: #3ecf8e;
+      --red: #f06060;
+      --purple: #b060f0;
+      --teal: #30c0c0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+
+    /* HEADER */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 28px 0 24px;
+      margin-bottom: 52px;
+    }
+    .header-row { display: flex; align-items: baseline; gap: 14px; margin-bottom: 10px; }
+    .logo { font-size: 20px; font-weight: 700; color: var(--accent); }
+    .doc-title { font-size: 14px; color: var(--muted); }
+    .meta { font-size: 13px; color: var(--muted); }
+    .meta a { color: var(--blue); text-decoration: none; }
+
+    /* SECTION LABELS */
+    h2 {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 28px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* PERSONA CARD */
+    .persona {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 48px;
+      background: var(--surface);
+    }
+    .persona.primary { border-color: var(--accent); }
+    .persona.secondary-1 { border-color: var(--blue); }
+    .persona.secondary-2 { border-color: var(--teal); }
+
+    /* PERSONA HEADER */
+    .persona-header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 24px;
+      align-items: center;
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .persona.primary .persona-header { background: rgba(232,160,32,0.05); }
+    .persona.secondary-1 .persona-header { background: rgba(91,138,240,0.05); }
+    .persona.secondary-2 .persona-header { background: rgba(48,192,192,0.05); }
+
+    .avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px; flex-shrink: 0;
+    }
+    .persona.primary .avatar { background: rgba(232,160,32,0.12); }
+    .persona.secondary-1 .avatar { background: rgba(91,138,240,0.12); }
+    .persona.secondary-2 .avatar { background: rgba(48,192,192,0.12); }
+
+    .persona-identity { }
+    .persona-name { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+    .persona-sub { font-size: 14px; color: var(--muted); }
+
+    .tier-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 6px 14px; border-radius: 20px;
+      white-space: nowrap;
+    }
+    .badge-primary { background: rgba(232,160,32,0.15); color: var(--accent); border: 1px solid rgba(232,160,32,0.3); }
+    .badge-secondary { background: rgba(91,138,240,0.12); color: var(--blue); border: 1px solid rgba(91,138,240,0.25); }
+    .badge-secondary-2 { background: rgba(48,192,192,0.12); color: var(--teal); border: 1px solid rgba(48,192,192,0.25); }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    /* PERSONA BODY */
+    .persona-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .persona-col {
+      padding: 28px 32px;
+    }
+    .persona-col + .persona-col {
+      border-left: 1px solid var(--border);
+    }
+
+    .block { margin-bottom: 28px; }
+    .block:last-child { margin-bottom: 0; }
+
+    .block-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+      text-transform: uppercase; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .label-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+    .persona.primary .context-dot { background: var(--accent); }
+    .persona.primary .jobs-dot { background: var(--green); }
+    .persona.primary .pain-dot { background: var(--red); }
+    .persona.primary .trust-dot { background: var(--blue); }
+
+    .persona.secondary-1 .context-dot { background: var(--blue); }
+    .persona.secondary-1 .jobs-dot { background: var(--green); }
+    .persona.secondary-1 .pain-dot { background: var(--red); }
+    .persona.secondary-1 .trust-dot { background: var(--teal); }
+
+    .persona.secondary-2 .context-dot { background: var(--teal); }
+    .persona.secondary-2 .jobs-dot { background: var(--green); }
+    .persona.secondary-2 .pain-dot { background: var(--red); }
+    .persona.secondary-2 .trust-dot { background: var(--purple); }
+
+    .block-label.context .block-label-text { color: var(--accent); }
+    .block-label.jobs .block-label-text { color: var(--green); }
+    .block-label.pain .block-label-text { color: var(--red); }
+    .block-label.trust .block-label-text { color: var(--blue); }
+    .block-label.quote .block-label-text { color: var(--muted); }
+
+    p { font-size: 14px; color: #a0a0c0; margin-bottom: 8px; line-height: 1.6; }
+    p:last-child { margin-bottom: 0; }
+
+    ul { list-style: none; padding: 0; }
+    ul li {
+      font-size: 14px; color: #a0a0c0;
+      padding: 5px 0 5px 16px;
+      position: relative; line-height: 1.5;
+    }
+    ul li::before {
+      content: '—'; position: absolute; left: 0;
+      color: var(--border); font-size: 12px;
+    }
+
+    /* TAGS */
+    .tag {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      padding: 3px 8px; border-radius: 4px; margin: 2px 2px 2px 0;
+      vertical-align: middle;
+    }
+    .tag-hypo { background: rgba(176,96,240,0.12); color: var(--purple); }
+    .tag-missing { background: rgba(240,96,96,0.12); color: var(--red); }
+    .tag-source { background: rgba(91,138,240,0.12); color: var(--blue); font-size: 10px; }
+
+    /* PAIN ITEMS */
+    .pain-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--red);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    .pain-item:last-child { margin-bottom: 0; }
+    .pain-platform { font-size: 11px; font-weight: 700; color: var(--red); margin-bottom: 4px; letter-spacing: 0.5px; }
+    .pain-text { font-size: 13px; color: #a0a0c0; line-height: 1.5; }
+
+    /* TRUST ITEMS */
+    .trust-positive, .trust-negative {
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .trust-positive { background: rgba(62,207,142,0.06); border: 1px solid rgba(62,207,142,0.15); color: #a0c0a8; }
+    .trust-negative { background: rgba(240,96,96,0.06); border: 1px solid rgba(240,96,96,0.15); color: #c0a0a0; }
+    .trust-icon { margin-right: 6px; }
+
+    /* QUOTE */
+    .quote-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+    }
+    .quote-missing {
+      font-size: 13px; color: var(--muted); font-style: italic; line-height: 1.6;
+    }
+    .quote-action {
+      margin-top: 10px; font-size: 12px; color: var(--blue);
+    }
+
+    /* PERSONA FOOTER */
+    .persona-footer {
+      border-top: 1px solid var(--border);
+      padding: 14px 32px;
+      display: flex; gap: 8px; flex-wrap: wrap;
+      background: rgba(0,0,0,0.15);
+    }
+
+    /* PRIMARY RATIONALE BOX */
+    .primary-rationale {
+      background: rgba(232,160,32,0.06);
+      border: 1px solid rgba(232,160,32,0.2);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 48px;
+    }
+    .rationale-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 10px;
+    }
+    .rationale-text { font-size: 14px; color: #c0a868; line-height: 1.6; }
+
+    /* GAPS TABLE */
+    .gaps-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .gaps-table th {
+      background: var(--surface2); color: var(--muted);
+      font-size: 11px; font-weight: 600; letter-spacing: 0.8px;
+      text-transform: uppercase; padding: 10px 16px; text-align: left;
+      border: 1px solid var(--border);
+    }
+    .gaps-table td {
+      padding: 12px 16px; border: 1px solid var(--border);
+      vertical-align: top; color: #a0a0c0; line-height: 1.5;
+    }
+    .gaps-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .gap-q { color: var(--red); font-weight: 700; white-space: nowrap; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+    footer { padding: 24px 0 48px; color: var(--muted); font-size: 12px; }
+    a { color: var(--blue); text-decoration: none; }
+    section { margin-bottom: 64px; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="header-row">
+      <span class="logo">Onespace</span>
+      <span class="doc-title">Personas</span>
+    </div>
+    <div class="meta">
+      Побудовано на даних research.md · Червень 2026 ·
+      <a href="research-report.html">← Competitor Report</a> ·
+      <a href="search-ux-analysis.html">← Search UX</a> ·
+      <a href="personas.md">personas.md</a>
+    </div>
+  </header>
+
+  <!-- PRIMARY RATIONALE -->
+  <section>
+    <h2>Вибір primary персони</h2>
+    <div class="primary-rationale">
+      <div class="rationale-label">Чому Оксана — primary</div>
+      <div class="rationale-text">
+        Дитячий режим з PIN-захистом — єдина платна функція в freemium-моделі Onespace. Саме батько/мати приймає рішення платити. Її біль найчіткіше видно в конкурентному аналізі: жоден HARD-конкурент не дає справжнього ізольованого дитячого простору — тільки полицю з жанром. Питання PM №1 в research.md прямо про неї. Без розуміння цієї персони MVP будується наосліп.
+        <br><br>
+        Персони 2 і 3 — secondary: їхні потреби реальні, але частково задовольняються існуючими рішеннями.
+        <span class="tag tag-source">research.md рядки 17–19, 112–113, 124</span>
+      </div>
+    </div>
+
+    <!-- PERSONA 1 -->
+    <div class="persona primary">
+      <div class="persona-header">
+        <div class="avatar">👩</div>
+        <div class="persona-identity">
+          <div class="persona-name">Оксана, 34</div>
+          <div class="persona-sub">Мама двох дітей (7 і 11 р.) · Київ · менеджер середньої ланки</div>
+        </div>
+        <span class="tier-badge badge-primary"><span class="badge-dot"></span>PRIMARY</span>
+      </div>
+
+      <div class="persona-body">
+        <div class="persona-col">
+
+          <div class="block">
+            <div class="block-label context">
+              <span class="label-dot context-dot"></span>
+              <span class="block-label-text">Контекст</span>
+            </div>
+            <p>Вечір після роботи, діти просять «поставити мультик». До сну залишилось 15 хвилин. Відкриває Megogo або YouTube — і починається пошук, який займає більше часу ніж сам перегляд.</p>
+            <p>Дві дитини різного віку — різний рівень контенту. Потрібне одне рішення для обох.</p>
+            <p><span class="tag tag-source">Sweet.TV audience «Сім'ї з дітьми, 25–50» · research.md р. 104</span></p>
+          </div>
+
+          <div class="block">
+            <div class="block-label jobs">
+              <span class="label-dot" style="background:var(--green)"></span>
+              <span class="block-label-text" style="color:var(--green)">Jobs</span>
+            </div>
+            <ul>
+              <li>Швидко знайти мультик або дитячий фільм, що підійде обом дітям.</li>
+              <li>Бути впевненою: дитина не натрапить на недитячий контент без її відома.</li>
+              <li>Не витрачати на вибір більше 5 хвилин.</li>
+            </ul>
+            <p style="margin-top:10px"><span class="tag tag-source">JTBD «знайти що подивитись дитині» · research.md р. 40</span></p>
+          </div>
+
+          <div class="block">
+            <div class="block-label quote">
+              <span class="label-dot" style="background:var(--muted)"></span>
+              <span class="block-label-text">Цитата-настрій</span>
+            </div>
+            <div class="quote-box">
+              <div class="quote-missing">
+                Реальні цитати не зібрано — App Store і Google Play не дали доступу до відгуків під час ресерчу.
+              </div>
+              <div class="quote-action">
+                Потенційне джерело: App Store відгуки Megogo / Sweet.TV · research.md р. 64–65 вказує що там є скарги на батьківський контроль, але самі відгуки не прочитані.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="persona-col">
+
+          <div class="block">
+            <div class="block-label pain">
+              <span class="label-dot label-dot pain-dot"></span>
+              <span class="block-label-text" style="color:var(--red)">Болі</span>
+            </div>
+            <div class="pain-item">
+              <div class="pain-platform">Megogo</div>
+              <div class="pain-text">Дитячий розділ є, але це просто жанрова полиця — ніщо не заважає дитині перейти до дорослого контенту кліком назад. Вікові мітки (+6/+12) є на картках, але ізольованого режиму немає.</div>
+            </div>
+            <div class="pain-item">
+              <div class="pain-platform">Sweet.TV</div>
+              <div class="pain-text">Батьківський контроль «relegated to FAQ» — схована функція, яку треба шукати, а не очевидна при першому відкритті.</div>
+            </div>
+            <div class="pain-item">
+              <div class="pain-platform">YouTube / Filmix <span class="tag tag-hypo">Гіпотеза</span></div>
+              <div class="pain-text">Відсутність будь-якого контролю — наступне відео алгоритм підбирає сам, і не завжди дитяче.</div>
+            </div>
+            <p style="margin-top:10px"><span class="tag tag-source">research.md р. 13–14, 112–113 · screens/megogo-home.png</span></p>
+            <p><span class="tag tag-missing">Не зібрано: що саме болить найбільше — складність налаштування, відсутність PIN, випадковий контент</span></p>
+          </div>
+
+          <div class="block">
+            <div class="block-label trust">
+              <span class="label-dot label-dot trust-dot"></span>
+              <span class="block-label-text" style="color:var(--blue)">Тригери довіри</span>
+            </div>
+            <div class="trust-positive">
+              <span class="trust-icon">✓</span>Кнопка «Дитячий режим» одразу видна на головній — розуміє що сервіс зроблено для неї. <span class="tag tag-hypo">Гіпотеза</span>
+            </div>
+            <div class="trust-positive">
+              <span class="trust-icon">✓</span>PIN-код при переключенні в дорослий режим — відчуття контролю. <span class="tag tag-hypo">Гіпотеза</span>
+            </div>
+            <div class="trust-positive">
+              <span class="trust-icon">✓</span>Вікові мітки видимі на картці без кліку. <span class="tag tag-hypo">Гіпотеза</span>
+            </div>
+            <div class="trust-negative">
+              <span class="trust-icon">✗</span>Реєстрація як перший крок — не дасть телефон дитині одразу. <span class="tag tag-hypo">Гіпотеза</span>
+            </div>
+            <div class="trust-negative">
+              <span class="trust-icon">✗</span>Незрозуміло де «межа» між дитячим і дорослим контентом. <span class="tag tag-hypo">Гіпотеза</span>
+            </div>
+            <p style="margin-top:10px"><span class="tag tag-source">«точки тертя» · research.md р. 19</span> <span class="tag tag-missing">Конкретних даних немає</span></p>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="persona-footer">
+        <span class="tag tag-source">research.md р. 17–19, 40, 104, 112–113, 124</span>
+        <span class="tag tag-source">screens/megogo-home.png</span>
+        <span class="tag tag-source">WebFetch Sweet.TV · research-report.html</span>
+      </div>
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- PERSONA 2 -->
+  <section>
+    <h2>Secondary персони</h2>
+
+    <div class="persona secondary-1">
+      <div class="persona-header">
+        <div class="avatar">👨‍💻</div>
+        <div class="persona-identity">
+          <div class="persona-name">Дмитро, 21</div>
+          <div class="persona-sub">Студент · Харків · шукає безкоштовно і швидко</div>
+        </div>
+        <span class="tier-badge badge-secondary"><span class="badge-dot"></span>SECONDARY</span>
+      </div>
+
+      <div class="persona-body">
+        <div class="persona-col">
+
+          <div class="block">
+            <div class="block-label context">
+              <span class="label-dot context-dot"></span>
+              <span class="block-label-text">Контекст</span>
+            </div>
+            <p>Пізній вечір, нічого конкретного на думці. Хоче «щось подивитись» — краще не гірше 7.5 на IMDb, не дуже довге, екшн або трилер. Відкриває Filmix або TikTok.</p>
+            <p><span class="tag tag-source">Filmix audience «15–35, безкоштовно і швидко» · research.md р. 104</span></p>
+            <p><span class="tag tag-source">TikTok «(12–25) відкриває кіно через #filmstowatch» · research.md р. 59</span></p>
+          </div>
+
+          <div class="block">
+            <div class="block-label jobs">
+              <span class="label-dot" style="background:var(--green)"></span>
+              <span class="block-label-text" style="color:var(--green)">Jobs</span>
+            </div>
+            <ul>
+              <li>Знайти фільм з хорошим IMDb-рейтингом без тривалого вибору.</li>
+              <li>Відкрити щось нове — відкриття, а не пошук конкретної назви.</li>
+              <li>Безкоштовно або майже безкоштовно.</li>
+            </ul>
+            <p style="margin-top:10px"><span class="tag tag-source">«шукають безкоштовно і швидко» · research.md р. 104</span></p>
+          </div>
+
+          <div class="block">
+            <div class="block-label quote">
+              <span class="label-dot" style="background:var(--muted)"></span>
+              <span class="block-label-text">Цитата-настрій</span>
+            </div>
+            <div class="quote-box">
+              <div class="quote-missing">
+                Реальні цитати не зібрано. Filmix закритий для WebFetch (403), Telegram-канали не сканувались.
+              </div>
+              <div class="quote-action">
+                Потенційне джерело: Filmix Telegram-коментарі, відгуки Filmix в App Store.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="persona-col">
+
+          <div class="block">
+            <div class="block-label pain">
+              <span class="label-dot pain-dot"></span>
+              <span class="block-label-text" style="color:var(--red)">Болі</span>
+            </div>
+            <div class="pain-item">
+              <div class="pain-platform">Filmix</div>
+              <div class="pain-text">Популярний попри поганий UX (research.md р. 29). Чому терпить — невідомо. Реклама? Нестабільність? Навігація? <span class="tag tag-missing">Не з'ясовано</span></div>
+            </div>
+            <div class="pain-item">
+              <div class="pain-platform">TikTok → платформа</div>
+              <div class="pain-text">Знаходить кіно через рекомендацію, але не завжди знає де дивитись легально і де взяти повну версію.</div>
+            </div>
+            <div class="pain-item">
+              <div class="pain-platform">Google</div>
+              <div class="pain-text">Першим йде туди (р. 44–45), але Google не відповідає де і як дивитись — перекидає на різні сайти.</div>
+            </div>
+            <p style="margin-top:10px"><span class="tag tag-missing">Не зібрано: чи важлива якість відео, чи платив би за підписку без реклами</span></p>
+          </div>
+
+          <div class="block">
+            <div class="block-label trust">
+              <span class="label-dot trust-dot"></span>
+              <span class="block-label-text" style="color:var(--teal)">Тригери довіри</span>
+            </div>
+            <div class="trust-positive">
+              <span class="trust-icon">✓</span>IMDb-рейтинг видимий на картці без кліку — головний сигнал. <span class="tag tag-hypo">Гіпотеза</span>
+            </div>
+            <div class="trust-positive">
+              <span class="trust-icon">✓</span>«Популярне зараз» або кількість переглядів — соціальне підтвердження. <span class="tag tag-hypo">Гіпотеза</span>
+            </div>
+            <div class="trust-negative">
+              <span class="trust-icon">✗</span>Обов'язкова реєстрація до пошуку. <span class="tag tag-hypo">Гіпотеза</span>
+            </div>
+            <div class="trust-negative">
+              <span class="trust-icon">✗</span>Порожня форма пошуку без підказок. <span class="tag tag-hypo">Гіпотеза</span>
+            </div>
+            <p style="margin-top:10px"><span class="tag tag-source">«пошук без реєстрації» як механізм Filmix · research.md р. 106</span></p>
+            <p><span class="tag tag-source">Антипатерн порожньої форми · search-ux-analysis.html</span></p>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="persona-footer">
+        <span class="tag tag-source">research.md р. 29, 44–45, 53–60, 104, 106</span>
+        <span class="tag tag-source">screens/filmix-home.png</span>
+      </div>
+    </div>
+
+    <!-- PERSONA 3 -->
+    <div class="persona secondary-2" style="margin-top:32px">
+      <div class="persona-header">
+        <div class="avatar">👩‍💼</div>
+        <div class="persona-identity">
+          <div class="persona-name">Ірина, 44</div>
+          <div class="persona-sub">Менеджер · Львів · вечір для себе, україномовне</div>
+        </div>
+        <span class="tier-badge badge-secondary-2"><span class="badge-dot"></span>SECONDARY</span>
+      </div>
+
+      <div class="persona-body">
+        <div class="persona-col">
+
+          <div class="block">
+            <div class="block-label context">
+              <span class="label-dot context-dot"></span>
+              <span class="block-label-text">Контекст</span>
+            </div>
+            <p>П'ятниця, чоловік у відрядженні, діти вже сплять. Хоче «щось для себе» — серіал або фільм де можна відключитись. Україномовний контент у пріоритеті. Є підписка на Megogo або Kino.ua.</p>
+            <p><span class="tag tag-source">Kino.ua audience «Україномовні 20–50» · research.md р. 104</span></p>
+            <p><span class="tag tag-source">Megogo «сім'ї, поодинокі 18–50» · research.md р. 104</span></p>
+          </div>
+
+          <div class="block">
+            <div class="block-label jobs">
+              <span class="label-dot" style="background:var(--green)"></span>
+              <span class="block-label-text" style="color:var(--green)">Jobs</span>
+            </div>
+            <ul>
+              <li>Знайти хороший фільм або серіал на вечір, бажано україномовний або з UA-субтитрами.</li>
+              <li>Не гортати каталог 20 хвилин — хоче впевненості що воно варте часу.</li>
+              <li>Знати де саме дивитись — чи є на її підписці. <span class="tag tag-hypo">Гіпотеза</span></li>
+            </ul>
+            <p style="margin-top:10px"><span class="tag tag-source">«значна частина UA-аудиторії отримує рекомендації через Telegram» · research.md р. 49</span></p>
+          </div>
+
+          <div class="block">
+            <div class="block-label quote">
+              <span class="label-dot" style="background:var(--muted)"></span>
+              <span class="block-label-text">Цитата-настрій</span>
+            </div>
+            <div class="quote-box">
+              <div class="quote-missing">
+                Реальні цитати не зібрано. Kino.ua недоступний технічно при зборі даних (ERR_CONNECTION_CLOSED).
+              </div>
+              <div class="quote-action">
+                Потенційне джерело: відгуки Kino.ua, UA-спільноти в Telegram про легальний стрімінг.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="persona-col">
+
+          <div class="block">
+            <div class="block-label pain">
+              <span class="label-dot pain-dot"></span>
+              <span class="block-label-text" style="color:var(--red)">Болі</span>
+            </div>
+            <div class="pain-item">
+              <div class="pain-platform">Megogo</div>
+              <div class="pain-text">Рейтинги вторинні, не очевидні на картці. Важко зрозуміти чи варто дивитись без кліку в деталі. «Рейтинги як вторинний елемент» — спільний патерн усіх HARD-конкурентів.</div>
+            </div>
+            <div class="pain-item">
+              <div class="pain-platform">Kino.ua <span class="tag tag-missing">Не досліджено</span></div>
+              <div class="pain-text">Недоступний технічно під час нашого збору даних (ERR_CONNECTION_CLOSED) — можлива нестабільність яку відчувають і користувачі.</div>
+            </div>
+            <div class="pain-item">
+              <div class="pain-platform">Telegram-канали</div>
+              <div class="pain-text">Є добірки, але немає фільтрації — не можна сказати «хочу трилер з рейтингом вище 8». Push без контролю.</div>
+            </div>
+            <p style="margin-top:10px"><span class="tag tag-source">«рейтинги вторинний елемент» · research.md р. 112</span></p>
+            <p><span class="tag tag-source">screens/megogo-home.png</span></p>
+          </div>
+
+          <div class="block">
+            <div class="block-label trust">
+              <span class="label-dot trust-dot"></span>
+              <span class="block-label-text" style="color:var(--purple)">Тригери довіри</span>
+            </div>
+            <div class="trust-positive">
+              <span class="trust-icon">✓</span>Україномовна озвучка або субтитри — сигнал «свій сервіс». <span class="tag tag-hypo">Гіпотеза</span>
+            </div>
+            <div class="trust-positive">
+              <span class="trust-icon">✓</span>IMDb рейтинг + кількість відгуків разом — більше довіри ніж один показник. <span class="tag tag-hypo">Гіпотеза</span>
+            </div>
+            <div class="trust-positive">
+              <span class="trust-icon">✓</span>Kino.ua позиціонування «свій сервіс» як тригер ідентичності.
+              <span class="tag tag-source">research.md р. 107</span>
+            </div>
+            <div class="trust-negative">
+              <span class="trust-icon">✗</span>Зацікавилась фільмом, але незрозуміло де дивитись і чи є на її підписці. <span class="tag tag-hypo">Гіпотеза</span>
+            </div>
+            <div class="trust-negative">
+              <span class="trust-icon">✗</span>Реклама у безкоштовному контенті. <span class="tag tag-hypo">Гіпотеза</span>
+            </div>
+            <p style="margin-top:10px"><span class="tag tag-missing">Не зібрано: скільки підписок має, чи важливо що легально, як шукає — по назві чи по настрою</span></p>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="persona-footer">
+        <span class="tag tag-source">research.md р. 47–50, 104, 107, 112</span>
+        <span class="tag tag-source">screens/megogo-home.png</span>
+      </div>
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- KNOWLEDGE GAPS -->
+  <section>
+    <h2>Що ми не знаємо про жодну персону</h2>
+    <table class="gaps-table">
+      <thead>
+        <tr>
+          <th style="width:40%">Питання</th>
+          <th>Чому критично для MVP</th>
+          <th style="width:100px;text-align:center">Статус</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Реальний флоу від «хочу дивитись» до першого кліку Play — скільки кроків, де зупиняються</td>
+          <td>Без цього не знаємо де вклинюватись і що оптимізувати</td>
+          <td class="gap-q" style="text-align:center">[?]</td>
+        </tr>
+        <tr>
+          <td>Чи платять зараз хоч за щось (підписка, разовий перегляд)</td>
+          <td>Впливає на готовність до freemium і цінову точку</td>
+          <td class="gap-q" style="text-align:center">[?]</td>
+        </tr>
+        <tr>
+          <td>Що означає «хороший рейтинг» — IMDb 7+? 8+? Кількість голосів має значення?</td>
+          <td>Визначає фільтри та дефолтне сортування на MVP</td>
+          <td class="gap-q" style="text-align:center">[?]</td>
+        </tr>
+        <tr>
+          <td>Реальний час вибору фільму в поточних рішеннях</td>
+          <td>Визначає KPI для «швидкого пошуку» — на скільки треба бути кращими</td>
+          <td class="gap-q" style="text-align:center">[?]</td>
+        </tr>
+        <tr>
+          <td>Чи знають що таке IMDb і чи довіряють цій назві</td>
+          <td>Впливає на те як подавати рейтинг — «IMDb 8.1» або просто ⭐ 8.1</td>
+          <td class="gap-q" style="text-align:center">[?]</td>
+        </tr>
+        <tr>
+          <td>Реальні цитати і мова якою описують проблему вибору фільму</td>
+          <td>Копірайт, назви функцій, tone of voice інтерфейсу</td>
+          <td class="gap-q" style="text-align:center">[?]</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr />
+
+  <footer>
+    Onespace Personas · Червень 2026 ·
+    Метод: аналіз research.md, конкурентний аналіз, WebFetch ·
+    Жодного user interview не проведено ·
+    <a href="personas.md">personas.md</a> ·
+    <a href="research-report.html">research-report.html</a> ·
+    <a href="../CLAUDE.md">CLAUDE.md</a>
+  </footer>
+
+</div>
+</body>
+</html>
