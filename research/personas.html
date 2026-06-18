@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Onespace — Personas & JTBD</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f13;
+      --surface: #1a1a22;
+      --surface2: #22222e;
+      --border: #2e2e3e;
+      --text: #e8e8f0;
+      --muted: #7878a0;
+      --accent: #e8a020;
+      --blue: #5b8af0;
+      --green: #3ecf8e;
+      --red: #f06060;
+      --purple: #9b6dff;
+      --teal: #2ad4c0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+    /* HEADER */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 28px 0;
+      margin-bottom: 56px;
+    }
+    .header-inner { display: flex; align-items: baseline; gap: 16px; }
+    .logo { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; color: var(--accent); }
+    .doc-title { font-size: 14px; color: var(--muted); }
+    .meta { margin-top: 8px; font-size: 13px; color: var(--muted); display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+    .nav-links { display: flex; gap: 16px; }
+    .nav-links a { font-size: 13px; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+
+    /* SECTIONS */
+    section { margin-bottom: 72px; }
+    h2 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 24px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 { font-size: 17px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+    h4 { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; margin-top: 20px; }
+    p { color: #b0b0cc; margin-bottom: 10px; font-size: 14px; }
+
+    /* TAGS */
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
+      vertical-align: middle;
+      line-height: 1.5;
+    }
+    .tag-hypo { background: rgba(155, 109, 255, 0.18); color: var(--purple); border: 1px solid rgba(155, 109, 255, 0.3); }
+    .tag-missing { background: rgba(240, 96, 96, 0.15); color: var(--red); border: 1px solid rgba(240, 96, 96, 0.3); }
+    .tag-source { background: rgba(91, 138, 240, 0.15); color: var(--blue); border: 1px solid rgba(91, 138, 240, 0.25); }
+    .tag-confirmed { background: rgba(62, 207, 142, 0.15); color: var(--green); border: 1px solid rgba(62, 207, 142, 0.25); }
+
+    /* PRIMARY RATIONALE BOX */
+    .rationale-box {
+      background: rgba(232, 160, 32, 0.08);
+      border: 1px solid rgba(232, 160, 32, 0.3);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+    }
+    .rationale-box .rationale-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .rationale-box p { font-size: 14px; color: #c0a060; margin: 0; line-height: 1.65; }
+
+    /* PERSONA CARDS GRID */
+    .personas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+    }
+
+    .persona-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      position: relative;
+    }
+    .persona-card.primary {
+      border-color: rgba(232, 160, 32, 0.5);
+      box-shadow: 0 0 0 1px rgba(232, 160, 32, 0.15);
+    }
+    .persona-card.secondary-blue { border-color: rgba(91, 138, 240, 0.4); }
+    .persona-card.secondary-teal { border-color: rgba(42, 212, 192, 0.4); }
+
+    .persona-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .persona-card.primary .persona-badge { background: rgba(232, 160, 32, 0.2); color: var(--accent); }
+    .persona-card.secondary-blue .persona-badge { background: rgba(91, 138, 240, 0.15); color: var(--blue); }
+    .persona-card.secondary-teal .persona-badge { background: rgba(42, 212, 192, 0.12); color: var(--teal); }
+
+    .persona-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -1px;
+    }
+    .primary .persona-avatar { background: rgba(232, 160, 32, 0.15); color: var(--accent); }
+    .secondary-blue .persona-avatar { background: rgba(91, 138, 240, 0.15); color: var(--blue); }
+    .secondary-teal .persona-avatar { background: rgba(42, 212, 192, 0.12); color: var(--teal); }
+
+    .persona-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .primary .persona-name { color: var(--accent); }
+    .secondary-blue .persona-name { color: var(--blue); }
+    .secondary-teal .persona-name { color: var(--teal); }
+
+    .persona-meta {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .persona-context {
+      font-size: 13px;
+      color: #a0a0c0;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: var(--surface2);
+      border-radius: 6px;
+      border-left: 2px solid var(--border);
+    }
+
+    .persona-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      margin-top: 14px;
+    }
+
+    .jobs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .jobs-list li {
+      font-size: 13px;
+      color: #b0b0cc;
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .jobs-list li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .pains-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .pains-list li {
+      font-size: 13px;
+      color: #b0b0cc;
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .pains-list li::before {
+      content: '×';
+      position: absolute;
+      left: 0;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .trust-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .trust-list li {
+      font-size: 13px;
+      color: #b0b0cc;
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .trust-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .persona-quote {
+      margin-top: 16px;
+      padding: 10px 14px;
+      background: var(--surface2);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* JOBS HIERARCHY */
+    .main-job-box {
+      background: rgba(62, 207, 142, 0.06);
+      border: 1px solid rgba(62, 207, 142, 0.25);
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin-bottom: 32px;
+    }
+    .main-job-box .job-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+    .main-job-box .job-text {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .main-job-box .job-text em { color: var(--green); font-style: normal; font-weight: 600; }
+    .main-job-box .job-personas {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .related-jobs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .job-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 18px;
+    }
+
+    .job-card .job-id {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .job-card .job-formula {
+      font-size: 13px;
+      color: #b0b0cc;
+      line-height: 1.65;
+      margin-bottom: 10px;
+    }
+    .job-card .job-formula .when { color: var(--muted); }
+    .job-card .job-formula .want { color: var(--blue); font-weight: 500; }
+    .job-card .job-formula .so { color: var(--accent); }
+
+    .job-card .job-personas-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .persona-chip {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .chip-oksana { background: rgba(232, 160, 32, 0.15); color: var(--accent); }
+    .chip-dmytro { background: rgba(91, 138, 240, 0.15); color: var(--blue); }
+    .chip-iryna { background: rgba(42, 212, 192, 0.12); color: var(--teal); }
+
+    .emotional-job-card {
+      background: var(--surface);
+      border: 1px solid rgba(155, 109, 255, 0.3);
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin-bottom: 12px;
+    }
+    .emotional-job-card .job-id { color: var(--purple); }
+
+    .hypotheses-section {
+      margin-top: 24px;
+    }
+    .hypothesis-item {
+      display: flex;
+      gap: 14px;
+      padding: 12px 16px;
+      background: rgba(155, 109, 255, 0.05);
+      border: 1px solid rgba(155, 109, 255, 0.15);
+      border-radius: 7px;
+      margin-bottom: 8px;
+    }
+    .hypothesis-item .hyp-id {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--purple);
+      min-width: 28px;
+      padding-top: 1px;
+    }
+    .hypothesis-item .hyp-text {
+      font-size: 13px;
+      color: #8888aa;
+      line-height: 1.6;
+    }
+    .hypothesis-item .hyp-text strong { color: #a090c8; font-weight: 600; }
+
+    /* JTBD MATRIX TABLE */
+    .matrix-wrapper {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    table.jtbd-matrix {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    table.jtbd-matrix thead th {
+      background: var(--surface2);
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    table.jtbd-matrix tbody tr {
+      border-bottom: 1px solid var(--border);
+    }
+    table.jtbd-matrix tbody tr:last-child { border-bottom: none; }
+    table.jtbd-matrix tbody tr:hover td { background: rgba(255,255,255,0.02); }
+
+    table.jtbd-matrix td {
+      padding: 14px 16px;
+      vertical-align: top;
+      color: #b0b0cc;
+      background: var(--surface);
+    }
+
+    .job-id-cell {
+      font-weight: 700;
+      color: var(--text);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .job-id-cell .job-short { color: var(--muted); font-size: 11px; font-weight: 400; display: block; margin-top: 2px; }
+
+    .importance-3 {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      background: rgba(62, 207, 142, 0.18);
+      color: var(--green);
+      font-weight: 800;
+      font-size: 14px;
+      border-radius: 6px;
+    }
+    .importance-2 {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      background: rgba(91, 138, 240, 0.15);
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: 6px;
+    }
+    .importance-1 {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      background: rgba(120,120,160, 0.1);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: 6px;
+    }
+    .importance-q {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      background: rgba(240, 96, 96, 0.1);
+      color: var(--red);
+      font-weight: 700;
+      font-size: 13px;
+      border-radius: 6px;
+    }
+
+    .cell-note {
+      font-size: 11px;
+      color: #6868888;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.4;
+      opacity: 0.85;
+    }
+
+    .competitors-cell {
+      font-size: 12px;
+      color: #8888aa;
+      line-height: 1.5;
+    }
+    .competitors-cell .nobody {
+      color: var(--red);
+      font-weight: 600;
+    }
+    .competitors-cell .partial {
+      color: var(--accent);
+    }
+    .competitors-cell .yes {
+      color: var(--green);
+    }
+
+    .feature-cell {
+      font-size: 12px;
+      color: #b0b0cc;
+      line-height: 1.5;
+    }
+
+    /* MVP CONCLUSION */
+    .mvp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+
+    .mvp-job-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--green);
+      border-radius: 8px;
+      padding: 18px 20px;
+    }
+
+    .mvp-job-card .mvp-rank {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--green);
+      margin-bottom: 6px;
+    }
+    .mvp-job-card h3 { font-size: 15px; margin-bottom: 8px; }
+    .mvp-job-card .mvp-rationale {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 10px;
+    }
+    .mvp-job-card .mvp-feature {
+      font-size: 12px;
+      color: var(--blue);
+      font-weight: 500;
+    }
+    .mvp-job-card .mvp-feature::before { content: '→ '; color: var(--muted); }
+
+    .cut-table { width: 100%; border-collapse: collapse; }
+    .cut-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      padding: 10px 14px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .cut-table td {
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #b0b0cc;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      vertical-align: top;
+    }
+    .cut-table tr:last-child td { border-bottom: none; }
+    .cut-table .feature-name { color: var(--text); font-weight: 600; }
+    .cut-verdict { color: var(--red); font-size: 12px; font-weight: 600; }
+    .cut-wrapper { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+
+    /* OPEN QUESTIONS */
+    .questions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 10px;
+    }
+    .question-item {
+      display: flex;
+      gap: 10px;
+      padding: 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      align-items: flex-start;
+    }
+    .question-item .q-missing {
+      flex-shrink: 0;
+    }
+    .question-item .q-text {
+      font-size: 13px;
+      color: #a0a0c0;
+      line-height: 1.5;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0 48px;
+      margin-top: 24px;
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-note { font-size: 12px; color: var(--muted); }
+    .footer-nav a { font-size: 12px; color: var(--muted); margin-left: 16px; }
+    .footer-nav a:hover { color: var(--text); }
+
+    /* LEGEND */
+    .legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      padding: 12px 16px;
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* VERIFIED TABLE */
+    .verify-table { width: 100%; border-collapse: collapse; }
+    .verify-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      padding: 10px 14px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .verify-table td {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #b0b0cc;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      vertical-align: top;
+    }
+    .verify-table tr:last-child td { border-bottom: none; }
+    .verify-wrapper { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 24px; }
+    .check-yes { color: var(--green); font-weight: 700; }
+    .check-partial { color: var(--accent); font-weight: 600; }
+    .check-no { color: var(--red); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="header-inner">
+      <span class="logo">Onespace</span>
+      <span class="doc-title">Personas & JTBD</span>
+    </div>
+    <div class="meta">
+      <span>Червень 2026</span>
+      <span>·</span>
+      <span>3 персони · 7 jobs · 4 гіпотези</span>
+      <span>·</span>
+      <div class="nav-links">
+        <a href="research-report.html">Дослідження конкурентів</a>
+        <a href="search-ux-analysis.html">Search UX</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ═══════════════════════════════════════
+       SECTION 1 — ВИБІР PRIMARY
+  ══════════════════════════════════════════ -->
+  <section id="primary">
+    <h2>Вибір primary-персони</h2>
+    <div class="rationale-box">
+      <div class="rationale-label">Чому Оксана — Primary</div>
+      <p>
+        Дитячий режим з PIN-захистом — ключовий диференціатор Onespace і єдина платна функція у freemium-моделі.
+        Саме Оксана прийматиме рішення платити. Її біль найчіткіше видно через «що вивчити у конкурентів»
+        (research.md рядки 17–19, 64–65). Питання PM №1 прямо стосується цього сегменту (рядок 124).
+        Без розуміння цієї персони MVP будується наосліп.
+        <br><br>
+        Персони 2 і 3 — secondary: валідні, але їхні потреби частково задовольняються існуючими рішеннями.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SECTION 2 — ПЕРСОНИ
+  ══════════════════════════════════════════ -->
+  <section id="personas">
+    <h2>Персони</h2>
+    <div class="personas-grid">
+
+      <!-- ОКСАНА — PRIMARY -->
+      <div class="persona-card primary">
+        <div class="persona-badge">Primary</div>
+        <div class="persona-avatar">О</div>
+        <div class="persona-name">Оксана</div>
+        <div class="persona-meta">34 роки · мама двох дітей · Київ</div>
+
+        <div class="persona-context">
+          Вечір після роботи, діти (7 і 11 років) просять «поставити мультик». У Оксани є 15 хвилин до того, як треба ще й укласти. Відкриває Megogo або YouTube — і починається.
+        </div>
+
+        <div class="persona-section-label">Jobs</div>
+        <ul class="jobs-list">
+          <li>Швидко знайти мультик або дитячий фільм, що підходить обом дітям (різний вік — різний рівень)</li>
+          <li>Бути впевненою, що дитина не натрапить на недитячий контент без її відома</li>
+          <li>Не витрачати на вибір більше 5 хвилин</li>
+        </ul>
+
+        <div class="persona-section-label">Болі в поточних рішеннях</div>
+        <ul class="pains-list">
+          <li><strong>Megogo:</strong> дитячий розділ — просто жанрова полиця, режиму «тільки дитяче» немає</li>
+          <li><strong>Sweet.TV:</strong> батьківський контроль «relegated to FAQ» — захована функція</li>
+          <li><strong>YouTube/Filmix:</strong> <span class="tag tag-hypo">Гіпотеза</span> відсутність будь-якого контролю</li>
+        </ul>
+
+        <div class="persona-section-label">Тригери довіри</div>
+        <ul class="trust-list">
+          <li><span class="tag tag-hypo">Гіп.</span> Кнопка «Дитячий режим» одразу на головній</li>
+          <li><span class="tag tag-hypo">Гіп.</span> PIN-код при переключенні в дорослий режим</li>
+          <li><span class="tag tag-hypo">Гіп.</span> Вікові мітки на кожній картці, без кліку</li>
+        </ul>
+
+        <div class="persona-quote">
+          <span class="tag tag-missing">?</span> Реальних цитат не зібрано. Потенційне джерело: App Store відгуки Megogo (рядок 64–65 research.md)
+        </div>
+      </div>
+
+      <!-- ДМИТРО — SECONDARY -->
+      <div class="persona-card secondary-blue">
+        <div class="persona-badge">Secondary</div>
+        <div class="persona-avatar">Д</div>
+        <div class="persona-name">Дмитро</div>
+        <div class="persona-meta">21 рік · студент · Харків</div>
+
+        <div class="persona-context">
+          Пізній вечір, нічого конкретного на думці. Хоче «щось подивитись» — бажано не гірше 7.5 на IMDb, не дуже довге, краще екшн або трилер. Відкриває Filmix або TikTok.
+        </div>
+
+        <div class="persona-section-label">Jobs</div>
+        <ul class="jobs-list">
+          <li>Знайти фільм із хорошим рейтингом, не витрачаючи часу на вибір</li>
+          <li>Дізнатись про новий фільм — відкриття, а не пошук конкретної назви</li>
+          <li>Зробити це безкоштовно або майже безкоштовно</li>
+        </ul>
+
+        <div class="persona-section-label">Болі в поточних рішеннях</div>
+        <ul class="pains-list">
+          <li><strong>Filmix:</strong> популярний попри поганий UX. Чому терпить — <span class="tag tag-missing">?</span></li>
+          <li><strong>TikTok/YouTube:</strong> знаходить кіно через рекомендацію, але не знає де дивитись легально</li>
+          <li><strong>Google:</strong> перший крок — але перекидає на різні сайти без відповіді</li>
+        </ul>
+
+        <div class="persona-section-label">Тригери довіри</div>
+        <ul class="trust-list">
+          <li><span class="tag tag-hypo">Гіп.</span> IMDb-рейтинг видимий на картці без кліку</li>
+          <li><span class="tag tag-hypo">Гіп.</span> «Популярне зараз» — соціальне підтвердження</li>
+        </ul>
+
+        <div class="persona-quote">
+          <span class="tag tag-missing">?</span> Реальних цитат не зібрано. Потенційне джерело: Filmix Telegram-коментарі, App Store
+        </div>
+      </div>
+
+      <!-- ІРИНА — SECONDARY -->
+      <div class="persona-card secondary-teal">
+        <div class="persona-badge">Secondary</div>
+        <div class="persona-avatar">І</div>
+        <div class="persona-name">Ірина</div>
+        <div class="persona-meta">44 роки · менеджер · Львів</div>
+
+        <div class="persona-context">
+          П'ятниця, чоловік у відрядженні, діти вже сплять. Хоче «щось для себе» — серіал або фільм, де можна відключитись. Україномовний контент у пріоритеті. Є підписка на Megogo або Kino.ua.
+        </div>
+
+        <div class="persona-section-label">Jobs</div>
+        <ul class="jobs-list">
+          <li>Знайти хороший фільм або серіал на вечір, бажано україномовний або з UA-субтитрами</li>
+          <li>Не гортати каталог 20 хвилин — хоче щось конкретне і впевнена що воно варте часу</li>
+          <li><span class="tag tag-hypo">Гіп.</span> Хоче знати де саме дивитись — на її підписці чи деінде</li>
+        </ul>
+
+        <div class="persona-section-label">Болі в поточних рішеннях</div>
+        <ul class="pains-list">
+          <li><strong>Megogo:</strong> рейтинги вторинні, не очевидні на картці. Важко оцінити без кліку</li>
+          <li><strong>Kino.ua:</strong> недоступний технічно (ERR_CONNECTION_CLOSED) — <span class="tag tag-missing">?</span> можлива нестабільність</li>
+          <li><strong>Telegram:</strong> добірки є, але немає фільтрації по рейтингу/жанру</li>
+        </ul>
+
+        <div class="persona-section-label">Тригери довіри</div>
+        <ul class="trust-list">
+          <li><span class="tag tag-hypo">Гіп.</span> Україномовна озвучка або субтитри — сигнал «свій сервіс»</li>
+          <li><span class="tag tag-hypo">Гіп.</span> IMDb рейтинг + кількість відгуків разом</li>
+          <li>Kino.ua позиціонування «свій сервіс» як тригер (research.md рядок 107)</li>
+        </ul>
+
+        <div class="persona-quote">
+          <span class="tag tag-missing">?</span> Реальних цитат не зібрано. Потенційне джерело: відгуки Kino.ua, UA-спільноти в Telegram
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SECTION 3 — ІЄРАРХІЯ JOBS
+  ══════════════════════════════════════════ -->
+  <section id="jobs">
+    <h2>Ієрархія Jobs to Be Done</h2>
+
+    <!-- MAIN JOB -->
+    <div class="main-job-box">
+      <div class="job-label">Main Job — навіщо існує Onespace</div>
+      <div class="job-text">
+        <em>Коли</em> у мене є вільний вечір і я хочу подивитись щось разом з дітьми або для себе,
+        <em>я хочу</em> швидко знайти фільм або мультфільм, що підходить моїй ситуації та смаку,
+        <em>щоб</em> одразу перейти до перегляду, а не витрачати вечір на сам вибір.
+      </div>
+      <div class="job-personas">
+        <span class="persona-chip chip-oksana">Оксана</span>
+        <span class="persona-chip chip-dmytro">Дмитро</span>
+        <span class="persona-chip chip-iryna">Ірина</span>
+        &nbsp;·&nbsp; <span class="tag tag-confirmed">Підтверджено</span> research.md р. 40, 104; personas р. 33, 128
+      </div>
+    </div>
+
+    <!-- RELATED JOBS -->
+    <h4>Related Jobs — кроки на шляху до Main Job</h4>
+    <div class="related-jobs-grid">
+
+      <div class="job-card">
+        <div class="job-id">J1 · Перевірка якості перед рішенням</div>
+        <div class="job-formula">
+          <span class="when">Коли</span> я бачу незнайомий фільм,
+          <span class="want">я хочу</span> одразу побачити наскільки він хороший,
+          <span class="so">щоб</span> не витрачати дві години на щось поганого.
+        </div>
+        <div class="job-personas-row">
+          <span class="persona-chip chip-dmytro">Дмитро · primary</span>
+          <span class="persona-chip chip-iryna">Ірина</span>
+          <span class="tag tag-confirmed">Підтверджено</span>
+        </div>
+      </div>
+
+      <div class="job-card">
+        <div class="job-id">J2 · Безпечний простір для дитини</div>
+        <div class="job-formula">
+          <span class="when">Коли</span> я даю дитині телефон і йду,
+          <span class="want">я хочу</span> бути впевненою що вона побачить тільки контент для її віку,
+          <span class="so">щоб</span> не переживати і не сидіти поруч.
+        </div>
+        <div class="job-personas-row">
+          <span class="persona-chip chip-oksana">Оксана · primary</span>
+          <span class="tag tag-confirmed">Підтверджено</span>
+        </div>
+      </div>
+
+      <div class="job-card">
+        <div class="job-id">J3 · Звуження без перегляду всього підряд</div>
+        <div class="job-formula">
+          <span class="when">Коли</span> я знаю що хочу приблизно,
+          <span class="want">я хочу</span> швидко відсіяти непідходяще не гортаючи весь каталог,
+          <span class="so">щоб</span> дійти до короткого списку за хвилину.
+        </div>
+        <div class="job-personas-row">
+          <span class="persona-chip chip-oksana">Оксана</span>
+          <span class="persona-chip chip-iryna">Ірина</span>
+          <span class="tag tag-confirmed">Підтверджено</span>
+        </div>
+      </div>
+
+      <div class="job-card">
+        <div class="job-id">J4 · Відкриття нового без назви в голові</div>
+        <div class="job-formula">
+          <span class="when">Коли</span> у мене є вільний час але нема конкретного фільму на думці,
+          <span class="want">я хочу</span> натрапити на щось нове і варте уваги,
+          <span class="so">щоб</span> отримати задоволення від несподіваного відкриття.
+        </div>
+        <div class="job-personas-row">
+          <span class="persona-chip chip-dmytro">Дмитро · primary</span>
+          <span class="tag tag-confirmed">Підтверджено</span>
+        </div>
+      </div>
+
+      <div class="job-card">
+        <div class="job-id">J5 · Довіра до вибору без зайвих кроків</div>
+        <div class="job-formula">
+          <span class="when">Коли</span> я знаходжу фільм і ще не вирішила дивитись,
+          <span class="want">я хочу</span> за кілька секунд зрозуміти чи це «моє»,
+          <span class="so">щоб</span> зробити вибір без переходу на інші сайти.
+        </div>
+        <div class="job-personas-row">
+          <span class="persona-chip chip-iryna">Ірина · primary</span>
+          <span class="persona-chip chip-oksana">Оксана</span>
+          <span class="tag tag-confirmed">Підтверджено</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- EMOTIONAL JOB -->
+    <h4>Emotional Job</h4>
+    <div class="emotional-job-card">
+      <div class="job-id" style="color: var(--purple);">E1 · Відчуття контролю, а не тривоги &nbsp;<span class="tag tag-hypo">Частково гіпотеза</span></div>
+      <div class="job-formula" style="margin-top: 8px;">
+        <span class="when">Коли</span> я думаю про те що дивляться мої діти,
+        <span class="want">я хочу</span> відчувати що я це контролюю і можу змінити будь-коли,
+        <span class="so">щоб</span> не мати фонової тривоги «а раптом побачать щось не те».
+      </div>
+      <div class="job-personas-row" style="margin-top: 10px;">
+        <span class="persona-chip chip-oksana">Оксана</span>
+        <span style="font-size: 12px; color: var(--muted);">Емоційний шар не підтверджений прямими даними — виводиться з болю J2</span>
+      </div>
+    </div>
+
+    <!-- HYPOTHESES -->
+    <div class="hypotheses-section">
+      <h4>Гіпотези — jobs без підтвердження даними <span class="tag tag-hypo">Не брати в MVP без верифікації</span></h4>
+      <div class="hypothesis-item">
+        <div class="hyp-id">H1</div>
+        <div class="hyp-text">
+          <strong>S1 · Соціальне підтвердження вибору:</strong> «Коли хтось питає що дивлюсь, я хочу мати що порадити, щоб виглядати людиною з хорошим смаком.»
+          → У ресерчі немає даних. Потребує перевірки через інтерв'ю.
+        </div>
+      </div>
+      <div class="hypothesis-item">
+        <div class="hyp-id">H2</div>
+        <div class="hyp-text">
+          <strong>Знати де дивитись:</strong> «Коли я знаходжу фільм, я хочу одразу бачити чи він є на моїх підписках.»
+          → Виводиться з Ірина job #3, але там позначено [Гіпотеза]. Чи це дійсно блокер вибору — невідомо.
+        </div>
+      </div>
+      <div class="hypothesis-item">
+        <div class="hyp-id">H3</div>
+        <div class="hyp-text">
+          <strong>Зберегти на потім:</strong> «Коли я знаходжу щось цікаве але зараз не час, я хочу зберегти це так щоб точно знайти потім.»
+          → Watchlist у freemium-моделі (CLAUDE.md) — але жодна персона не назвала це болем явно.
+        </div>
+      </div>
+      <div class="hypothesis-item">
+        <div class="hyp-id">H4</div>
+        <div class="hyp-text">
+          <strong>Емоційний настрій як старт:</strong> «Коли я хочу подивитись ввечері, я хочу почати з настрою а не жанру.»
+          → Mood-based search (Spotify pattern) — привабливий для дизайну, але немає даних що UA-аудиторія шукає саме так.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SECTION 4 — JTBD МАТРИЦЯ
+  ══════════════════════════════════════════ -->
+  <section id="matrix">
+    <h2>JTBD-матриця</h2>
+
+    <div class="legend">
+      <div class="legend-item"><span class="importance-3">3</span> Ядро для цієї персони</div>
+      <div class="legend-item"><span class="importance-2">2</span> Значущо</div>
+      <div class="legend-item"><span class="importance-1">1</span> Слабо / не релевантно</div>
+      <div class="legend-item"><span class="importance-q">?</span> Даних немає</div>
+      <div class="legend-item"><span class="tag tag-hypo">Гіпотеза</span> Не підтверджено</div>
+      <div class="legend-item"><span class="tag tag-missing">?</span> Відсутні дані</div>
+    </div>
+
+    <div class="matrix-wrapper">
+      <table class="jtbd-matrix">
+        <thead>
+          <tr>
+            <th style="min-width:160px;">Job</th>
+            <th style="min-width:130px;">Оксана<br><span style="color:var(--accent);font-size:10px;">PRIMARY</span></th>
+            <th style="min-width:130px;">Дмитро<br><span style="color:var(--blue);font-size:10px;">Secondary</span></th>
+            <th style="min-width:130px;">Ірина<br><span style="color:var(--teal);font-size:10px;">Secondary</span></th>
+            <th style="min-width:200px;">Функція в продукті</th>
+            <th style="min-width:200px;">Конкуренти: чи закривають</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="job-id-cell">Main Job
+                <span class="job-short">Знайти фільм/мультик швидко</span>
+              </div>
+            </td>
+            <td>
+              <span class="importance-3">3</span>
+              <div class="cell-note">вечір після роботи, 15 хв</div>
+            </td>
+            <td>
+              <span class="importance-3">3</span>
+              <div class="cell-note">«безкоштовно і швидко», нема назви в голові</div>
+            </td>
+            <td>
+              <span class="importance-3">3</span>
+              <div class="cell-note">«не гортати каталог 20 хвилин»</div>
+            </td>
+            <td class="feature-cell">Головна з трендами + пошук</td>
+            <td class="competitors-cell"><span class="partial">Частково:</span> Megogo, Filmix — але повільно або некомфортно (р. 112–114)</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="job-id-cell">J1
+                <span class="job-short">Рейтинг одразу, без переходу</span>
+              </div>
+            </td>
+            <td>
+              <span class="importance-2">2</span>
+              <div class="cell-note">потрібен вік, а не тільки IMDb; рейтинг допомагає відсіяти</div>
+            </td>
+            <td>
+              <span class="importance-3">3</span>
+              <div class="cell-note">«не гірше 7.5 IMDb» — головний сигнал</div>
+            </td>
+            <td>
+              <span class="importance-3">3</span>
+              <div class="cell-note">«рейтинги вторинні» у конкурентів — біль не закритий</div>
+            </td>
+            <td class="feature-cell">IMDb-рейтинг на картці без кліку</td>
+            <td class="competitors-cell"><span class="partial">Filmix — так</span> (р. 107);<br>Megogo — ні, рейтинги сховані (р. 112)</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="job-id-cell">J2
+                <span class="job-short">Безпечний простір для дитини</span>
+              </div>
+            </td>
+            <td>
+              <span class="importance-3">3</span>
+              <div class="cell-note">«бути впевненою що не натрапить» — core job</div>
+            </td>
+            <td>
+              <span class="importance-1">1</span>
+              <div class="cell-note">немає дітей, не релевантно</div>
+            </td>
+            <td>
+              <span class="importance-1">1</span>
+              <div class="cell-note">діти сплять, шукає для себе</div>
+            </td>
+            <td class="feature-cell">Дитячий режим з PIN</td>
+            <td class="competitors-cell"><span class="nobody">Ніхто</span> — дитячий контент скрізь лише категорія, не режим (р. 113)</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="job-id-cell">J3
+                <span class="job-short">Звузити список без гортання</span>
+              </div>
+            </td>
+            <td>
+              <span class="importance-3">3</span>
+              <div class="cell-note">різний вік дітей, 5 хв на вибір</div>
+            </td>
+            <td>
+              <span class="importance-2">2</span>
+              <div class="cell-note">хоче жанр + рейтинг, але потреба простіша</div>
+            </td>
+            <td>
+              <span class="importance-3">3</span>
+              <div class="cell-note">«хоче конкретне і впевнена що варте»</div>
+            </td>
+            <td class="feature-cell">Фільтри: жанр, рік, рейтинг, вікова категорія</td>
+            <td class="competitors-cell">Megogo — базові фільтри є;<br><span class="yes">JustWatch — найкраще</span>, але не UA-ринок (р. 106, 114)</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="job-id-cell">J4
+                <span class="job-short">Відкрити нове без назви</span>
+              </div>
+            </td>
+            <td>
+              <span class="importance-1">1</span>
+              <div class="cell-note">не згадано; безпека важливіша</div>
+            </td>
+            <td>
+              <span class="importance-3">3</span>
+              <div class="cell-note">«відкриття, а не пошук конкретної назви»</div>
+            </td>
+            <td>
+              <span class="importance-q">?</span>
+              <div class="cell-note">не згадано явно; Telegram-push вказує на можливу потребу</div>
+            </td>
+            <td class="feature-cell">Тренди та добірки (топ тижня, нові, популярне)</td>
+            <td class="competitors-cell"><span class="yes">TikTok, YouTube — так</span> (р. 53–60);<br>стрімінги — частково через «популярне»</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="job-id-cell">J5
+                <span class="job-short">Довіритись вибору без виходу</span>
+              </div>
+            </td>
+            <td>
+              <span class="importance-2">2</span>
+              <div class="cell-note">вікові мітки без кліку</div>
+            </td>
+            <td>
+              <span class="importance-3">3</span>
+              <div class="cell-note">IMDb на картці = довіра без переходу</div>
+            </td>
+            <td>
+              <span class="importance-3">3</span>
+              <div class="cell-note">зацікавилась але нема підтвердження → іде на Google</div>
+            </td>
+            <td class="feature-cell">Картка: постер + рейтинг + жанр + рік + одне речення</td>
+            <td class="competitors-cell">Більшість — ні (р. 112);<br><span class="partial">Filmix — частково</span> (IMDb є, але UX слабкий)</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="job-id-cell">E1
+                <span class="job-short">Контроль, а не тривога</span>
+              </div>
+              <span class="tag tag-hypo" style="margin-top:4px;">Частково гіпотеза</span>
+            </td>
+            <td>
+              <span class="importance-3">3</span>
+              <div class="cell-note">[Гіп.] «PIN — відчуття контролю, а не тривоги»</div>
+            </td>
+            <td>
+              <span class="importance-1">1</span>
+              <div class="cell-note">не релевантно</div>
+            </td>
+            <td>
+              <span class="importance-1">1</span>
+              <div class="cell-note">не релевантно</div>
+            </td>
+            <td class="feature-cell">PIN-захист при виході з дитячого режиму</td>
+            <td class="competitors-cell"><span class="nobody">Ніхто</span> — батьківський контроль або відсутній або в FAQ (р. 17–19)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SECTION 5 — ВИСНОВОК ДЛЯ MVP
+  ══════════════════════════════════════════ -->
+  <section id="mvp">
+    <h2>Висновок — що іде в ядро MVP</h2>
+
+    <h4>3 Jobs у ядро — важливі для primary персони і не закриті ринком</h4>
+    <div class="mvp-grid">
+      <div class="mvp-job-card">
+        <div class="mvp-rank">1 · Пріоритет</div>
+        <h3>J2 — Безпечний простір для дитини</h3>
+        <div class="mvp-rationale">
+          Оксана: <strong style="color: var(--green);">3</strong>. Ринок: ніхто не закриває. Єдиний диференціатор Onespace серед HARD-конкурентів.
+        </div>
+        <div class="mvp-feature">Дитячий режим з PIN, вікова мітка на кожній картці</div>
+      </div>
+
+      <div class="mvp-job-card">
+        <div class="mvp-rank">2 · Пріоритет</div>
+        <h3>J1 — Рейтинг одразу, без переходу</h3>
+        <div class="mvp-rationale">
+          Оксана: <strong style="color: var(--blue);">2</strong>, Дмитро: <strong style="color: var(--green);">3</strong>, Ірина: <strong style="color: var(--green);">3</strong>. Закриває main job для всіх трьох. Filmix закриває технічно, але його UX — антипатерн.
+        </div>
+        <div class="mvp-feature">IMDb-рейтинг як перший елемент картки, не захований за кліком</div>
+      </div>
+
+      <div class="mvp-job-card">
+        <div class="mvp-rank">3 · Пріоритет</div>
+        <h3>J3 — Звузити список без гортання</h3>
+        <div class="mvp-rationale">
+          Оксана: <strong style="color: var(--green);">3</strong>, Ірина: <strong style="color: var(--green);">3</strong>. Megogo має базові фільтри, але пошук «підходить дитині 8 років» — ніхто не будує.
+        </div>
+        <div class="mvp-feature">Фільтри жанр + рейтинг + вік із миттєвим оновленням без перезавантаження</div>
+      </div>
+    </div>
+
+    <h4>Функції-кандидати на виліт з MVP</h4>
+    <div class="cut-wrapper">
+      <table class="cut-table">
+        <thead>
+          <tr>
+            <th>Функція</th>
+            <th>Який job закриває</th>
+            <th>Висновок</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="feature-name">Watchlist</span></td>
+            <td>H3 <span class="tag tag-hypo">Гіпотеза</span> — «зберегти на потім»</td>
+            <td><span class="cut-verdict">Виліт.</span> Не закриває жоден підтверджений job. Додати після MVP якщо з'явиться підтверджений попит.</td>
+          </tr>
+          <tr>
+            <td><span class="feature-name">Реєстрація як обов'язковий крок</span></td>
+            <td>Технічна передумова для PIN і watchlist</td>
+            <td><span class="cut-verdict">Відкласти.</span> Якщо watchlist вилітає — логін тільки для PIN-режиму. Реєстрація має бути відкладеною, не першим кроком. Блокує J5 і Дмитра.</td>
+          </tr>
+          <tr>
+            <td><span class="feature-name">Посилання на OTT-платформи</span></td>
+            <td>H2 <span class="tag tag-hypo">Гіпотеза</span> — «знати де дивитись»</td>
+            <td><span class="cut-verdict">Не в MVP.</span> Не підкріплено підтвердженим job. Корисно, але не ядро. Повернути пізніше.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SECTION 6 — ВІДКРИТІ ПИТАННЯ
+  ══════════════════════════════════════════ -->
+  <section id="gaps">
+    <h2>Відкриті питання <span class="tag tag-missing" style="vertical-align: middle;">?</span></h2>
+
+    <div class="questions-grid">
+      <div class="question-item">
+        <div class="q-missing"><span class="tag tag-missing">?</span></div>
+        <div class="q-text">Реальний флоу від «хочу дивитись» до першого кліку Play — скільки кроків, де зупиняються. Без цього не знаємо де вклинюватись.</div>
+      </div>
+      <div class="question-item">
+        <div class="q-missing"><span class="tag tag-missing">?</span></div>
+        <div class="q-text">Чи платять зараз хоч за щось (підписка, разовий перегляд). Впливає на готовність до freemium.</div>
+      </div>
+      <div class="question-item">
+        <div class="q-missing"><span class="tag tag-missing">?</span></div>
+        <div class="q-text">Що означає «хороший рейтинг» — IMDb 7+? 8+? Кількість голосів має значення? Впливає на фільтри за замовчуванням.</div>
+      </div>
+      <div class="question-item">
+        <div class="q-missing"><span class="tag tag-missing">?</span></div>
+        <div class="q-text">Реальний час вибору фільму в поточних рішеннях. Визначає KPI для «швидкого пошуку».</div>
+      </div>
+      <div class="question-item">
+        <div class="q-missing"><span class="tag tag-missing">?</span></div>
+        <div class="q-text">Чи знають що таке TMDB, IMDb — чи довіряють цим назвам. Впливає на те як подавати рейтинг.</div>
+      </div>
+      <div class="question-item">
+        <div class="q-missing"><span class="tag tag-missing">?</span></div>
+        <div class="q-text">Реальні цитати і мова якою описують проблему. Не зібрано жодного відгуку з App Store чи форумів.</div>
+      </div>
+      <div class="question-item">
+        <div class="q-missing"><span class="tag tag-missing">?</span></div>
+        <div class="q-text">Скільки хвилин займає вибір у середньому (UA ринок). ~30 URL спробовано, всі заблоковані.</div>
+      </div>
+      <div class="question-item">
+        <div class="q-missing"><span class="tag tag-missing">?</span></div>
+        <div class="q-text">Чи відрізняється флоу «для дитини» vs «для себе». Немає даних, але критично для ієрархії функцій.</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-note">
+        Onespace Research · Персони і JTBD побудовані виключно на даних research.md<br>
+        [Гіпотеза] = логічний висновок без прямого підтвердження · [?] = даних немає
+      </div>
+      <div class="footer-nav">
+        <a href="research-report.html">Конкуренти</a>
+        <a href="search-ux-analysis.html">Search UX</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
