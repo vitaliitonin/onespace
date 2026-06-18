@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Onespace — Research Report</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f13;
+      --surface: #1a1a22;
+      --surface2: #22222e;
+      --border: #2e2e3e;
+      --text: #e8e8f0;
+      --muted: #7878a0;
+      --accent: #e8a020;
+      --accent2: #5b8af0;
+      --green: #3ecf8e;
+      --red: #f06060;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* LAYOUT */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+    /* HEADER */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 28px 0;
+      margin-bottom: 48px;
+    }
+    .header-inner { display: flex; align-items: baseline; gap: 16px; }
+    .logo { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; color: var(--accent); }
+    .doc-title { font-size: 14px; color: var(--muted); }
+    .meta { margin-top: 6px; font-size: 13px; color: var(--muted); }
+
+    /* SECTIONS */
+    section { margin-bottom: 64px; }
+    h2 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 24px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+    h4 { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+    p { color: #b0b0cc; margin-bottom: 12px; }
+
+    /* COMPETITOR CARDS */
+    .competitors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+    .competitor-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .card-screenshot {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      object-position: top;
+      display: block;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+    }
+    .card-screenshot.missing {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 13px;
+      height: 200px;
+    }
+    .card-body { padding: 20px; }
+    .card-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .card-type { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+    .card-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 14px;
+    }
+    .tag-hard { background: rgba(240,96,96,0.15); color: var(--red); }
+    .tag-soft { background: rgba(91,138,240,0.15); color: var(--accent2); }
+    .tag-aspirational { background: rgba(62,207,142,0.15); color: var(--green); }
+
+    .card-row { margin-bottom: 10px; }
+    .card-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+    .card-value { font-size: 13px; color: var(--text); }
+
+    /* COMPARISON TABLE */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th {
+      background: var(--surface2);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 12px 16px;
+      text-align: left;
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    th.col-platform { color: var(--accent); }
+    td {
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+      color: #b0b0cc;
+      line-height: 1.5;
+    }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .row-label {
+      color: var(--text);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      background: var(--surface2);
+    }
+
+    /* FINDINGS */
+    .findings-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .finding-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .finding-num {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .finding-patterns .finding-num { color: var(--accent); }
+    .finding-differences .finding-num { color: var(--accent2); }
+    .finding-questions .finding-num { color: var(--green); }
+    .finding-card h3 { font-size: 14px; margin-bottom: 8px; }
+    .finding-card p { font-size: 13px; margin-bottom: 0; }
+
+    /* SCREENSHOTS GALLERY */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      gap: 16px;
+    }
+    .gallery-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .gallery-item img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: top;
+      max-height: 280px;
+    }
+    .gallery-caption {
+      padding: 12px 16px;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    .gallery-caption strong { color: var(--text); }
+
+    /* STATUS BADGE */
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .status-done { background: rgba(62,207,142,0.12); color: var(--green); }
+    .status-blocked { background: rgba(240,96,96,0.12); color: var(--red); }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    /* DIVIDER */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="header-inner">
+      <span class="logo">Onespace</span>
+      <span class="doc-title">Research Report</span>
+    </div>
+    <div class="meta">Competitive analysis · Desk research · Playwright screenshots · Червень 2026</div>
+  </header>
+
+  <!-- SCREENSHOTS -->
+  <section>
+    <h2>Скріншоти конкурентів</h2>
+    <div class="gallery">
+      <div class="gallery-item">
+        <img src="screens/megogo-home.png" alt="Megogo — головна" />
+        <div class="gallery-caption">
+          <strong>Megogo</strong> — головна · 1440×900
+          <span class="status status-done" style="float:right"><span class="status-dot"></span>OK</span>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="screens/megogo-search.png" alt="Megogo — пошук" />
+        <div class="gallery-caption">
+          <strong>Megogo</strong> — пошук / розширені фільтри
+          <span class="status status-done" style="float:right"><span class="status-dot"></span>OK</span>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="screens/sweet-tv-home.png" alt="Sweet.TV — головна" />
+        <div class="gallery-caption">
+          <strong>Sweet.TV</strong> — головна · 1440×900
+          <span class="status status-done" style="float:right"><span class="status-dot"></span>OK</span>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="screens/filmix-home.png" alt="Filmix — головна" />
+        <div class="gallery-caption">
+          <strong>Filmix</strong> — головна · 1440×900
+          <span class="status status-done" style="float:right"><span class="status-dot"></span>OK</span>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="screens/filmix-catalog.png" alt="Filmix — каталог" />
+        <div class="gallery-caption">
+          <strong>Filmix</strong> — каталог фільмів
+          <span class="status status-done" style="float:right"><span class="status-dot"></span>OK</span>
+        </div>
+      </div>
+      <div class="gallery-item" style="display:flex;align-items:center;justify-content:center;min-height:200px;flex-direction:column;gap:8px">
+        <span style="font-size:32px">🔒</span>
+        <div class="gallery-caption" style="text-align:center;border:none">
+          <strong>Kino.ua</strong> — заблокований<br>
+          <span class="status status-blocked" style="margin-top:6px;display:inline-flex"><span class="status-dot"></span>ERR_CONNECTION_CLOSED</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- HARD COMPETITORS -->
+  <section>
+    <h2>HARD — той самий продукт, той самий ринок</h2>
+    <div class="competitors-grid">
+
+      <div class="competitor-card">
+        <img class="card-screenshot" src="screens/megogo-home.png" alt="Megogo" />
+        <div class="card-body">
+          <div class="card-name">Megogo</div>
+          <div class="card-type">Стрімінг + каталог з пошуком</div>
+          <span class="card-tag tag-hard">HARD</span>
+          <div class="card-row">
+            <div class="card-label">Чому тут</div>
+            <div class="card-value">Найбільша легальна UA-платформа з дитячим розділом і рейтингами — прямий перетин аудиторії</div>
+          </div>
+          <div class="card-row">
+            <div class="card-label">Що вивчити</div>
+            <div class="card-value">Перемикач дитячий/дорослий, структура фільтрів, рейтинги на картці (+6/+12/+16/+18)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="card-screenshot missing" style="display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;">Скріншот недоступний</div>
+        <div class="card-body">
+          <div class="card-name">Kino.ua</div>
+          <div class="card-type">Стрімінг + редакційні добірки</div>
+          <span class="card-tag tag-hard">HARD</span>
+          <div class="card-row">
+            <div class="card-label">Чому тут</div>
+            <div class="card-value">Фокус на україномовному контенті, позиціонується як «свій» сервіс для патріотичної аудиторії</div>
+          </div>
+          <div class="card-row">
+            <div class="card-label">Що вивчити</div>
+            <div class="card-value">Редакційні підбірки та тренди, наскільки помітні рейтинги</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <img class="card-screenshot" src="screens/sweet-tv-home.png" alt="Sweet.TV" />
+        <div class="card-body">
+          <div class="card-name">Sweet.TV</div>
+          <div class="card-type">Стрімінг + агрегатор каналів</div>
+          <span class="card-tag tag-hard">HARD</span>
+          <div class="card-row">
+            <div class="card-label">Чому тут</div>
+            <div class="card-value">Активна UA-аудиторія сімей з дітьми (5 пристроїв на будинок) — наш core сегмент</div>
+          </div>
+          <div class="card-row">
+            <div class="card-label">Що вивчити</div>
+            <div class="card-value">UX батьківського контролю, точки тертя при переключенні режимів</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <img class="card-screenshot" src="screens/filmix-home.png" alt="Filmix" />
+        <div class="card-body">
+          <div class="card-name">Filmix</div>
+          <div class="card-type">Каталог + перегляд (сіра зона)</div>
+          <span class="card-tag tag-hard">HARD</span>
+          <div class="card-row">
+            <div class="card-label">Чому тут</div>
+            <div class="card-value">Один з найпопулярніших сайтів пошуку фільмів в Україні — реальна поведінка нашої аудиторії зараз</div>
+          </div>
+          <div class="card-row">
+            <div class="card-label">Що вивчити</div>
+            <div class="card-value">Чому обирають попри якість UX, фільтри, IMDb рейтинги на картках</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- COMPARISON TABLE -->
+  <section>
+    <h2>Порівняльна таблиця HARD-конкурентів</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Вісь</th>
+            <th class="col-platform">Megogo</th>
+            <th class="col-platform">Kino.ua</th>
+            <th class="col-platform">Sweet.TV</th>
+            <th class="col-platform">Filmix</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-label">Аудиторія</td>
+            <td>Широка, 18–50, мультимовна, сім'ї та одинаки</td>
+            <td>Україномовні 20–50, патріотично налаштовані</td>
+            <td>Сім'ї 25–50, 5 пристроїв на будинок</td>
+            <td>15–35, шукають безкоштовно і швидко</td>
+          </tr>
+          <tr>
+            <td class="row-label">Основа продукту</td>
+            <td>Стрімінг + live TV + workout; сильна каталогова база</td>
+            <td>Стрімінг укр. контенту + редакційні добірки</td>
+            <td>Live TV + стрімінг; акцент на кількість каналів (202+)</td>
+            <td>Каталог + перегляд без бар'єрів</td>
+          </tr>
+          <tr>
+            <td class="row-label">Ключовий механізм</td>
+            <td>Вікові мітки (+6/+12/+16/+18) на картках; фільтр «Сімейні»; розширений пошук</td>
+            <td>Добірки «Українською», жанрові колекції, редакційний куратор</td>
+            <td>7-денний trial → підписка; 202 канали як hook для реєстрації</td>
+            <td>Пошук без реєстрації, широкий каталог, IMDb на картках</td>
+          </tr>
+          <tr>
+            <td class="row-label">Довіра</td>
+            <td>Легальність, multi-platform, цінова прозорість</td>
+            <td>Україномовність як ідентичність; «свій» сервіс</td>
+            <td>Disney/Paramount/Sony; 10M+ користувачів; 24/7 підтримка</td>
+            <td>Community trust; IMDb-рейтинги як якісний сигнал</td>
+          </tr>
+          <tr>
+            <td class="row-label">Монетизація</td>
+            <td>Freemium: безкоштовний контент + pay-per-view + підписка</td>
+            <td>Підписка (SVOD)</td>
+            <td>Freemium: безкоштовні канали + платна підписка</td>
+            <td>Реклама + (можливо) premium без реклами</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- FINDINGS -->
+  <section>
+    <h2>Висновки</h2>
+
+    <h4 style="margin-bottom:16px">3 спільні патерни</h4>
+    <div class="findings-grid finding-patterns" style="margin-bottom:32px">
+      <div class="finding-card">
+        <div class="finding-num">01</div>
+        <h3>Рейтинги — вторинний елемент</h3>
+        <p>Жоден HARD-конкурент не будує продукт навколо рейтингів. Вони або відсутні, або сховані. Пряма точка входу для Onespace.</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-num">02</div>
+        <h3>Дитячий контент — полиця, не режим</h3>
+        <p>Всі чотири показують дитячий контент як окрему категорію, але не як ізольований простір з батьківським контролем на рівні UX.</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-num">03</div>
+        <h3>Пошук = поле + фільтри</h3>
+        <p>У всіх схема однакова: рядок пошуку + базові фільтри. Ніхто не будує пошук від настрою або «що підходить дитині 8 років».</p>
+      </div>
+    </div>
+
+    <h4 style="margin-bottom:16px">3 ключові відмінності</h4>
+    <div class="findings-grid finding-differences" style="margin-bottom:32px">
+      <div class="finding-card">
+        <div class="finding-num">01</div>
+        <h3>Стрімінг vs агрегація</h3>
+        <p>Megogo, Sweet.TV, Kino.ua конкурують за контент-ліцензії; Filmix обходить це нелегально. Onespace не в цій грі — і це перевага.</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-num">02</div>
+        <h3>Два джерела довіри</h3>
+        <p>Легальні будують довіру через партнерів (Disney, Sony). Filmix — через IMDb-оцінки. Onespace може взяти краще з обох.</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-num">03</div>
+        <h3>Різний ціннісний обмін</h3>
+        <p>Конкуренти продають доступ до контенту. Onespace продає зручність і безпеку (дитячий режим, watchlist) — інший обмін.</p>
+      </div>
+    </div>
+
+    <h4 style="margin-bottom:16px">3 питання до PM</h4>
+    <div class="findings-grid finding-questions">
+      <div class="finding-card">
+        <div class="finding-num">01</div>
+        <h3>Де вклинюємось у поточний флоу?</h3>
+        <p>Чи є дані про те, як UA батьки зараз вирішують «що показати дитині»? Більшість іде в YouTube або Megogo за звичкою — де саме ми перехоплюємо цей JTBD?</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-num">02</div>
+        <h3>Ширина каталогу чи глибина дитячого UX?</h3>
+        <p>Що пріоритет на MVP — покриття TMDB чи проектування безпечного дитячого простору? Від цього залежить де витрачаємо ресурс.</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-num">03</div>
+        <h3>Affiliate з Megogo / Sweet.TV?</h3>
+        <p>Чи розглядаємо це як основу монетизації поряд з підпискою? Якщо так — треба з'ясувати умови партнерства до MVP, бо це змінює архітектуру картки фільму.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- SOFT + ASPIRATIONAL LIST -->
+  <section>
+    <h2>СОФТ та АСПІРАЦІЙНІ конкуренти</h2>
+    <div class="competitors-grid">
+
+      <div class="competitor-card">
+        <div class="card-body">
+          <div class="card-name">Google Search</div>
+          <div class="card-type">Пошукова система</div>
+          <span class="card-tag tag-soft">SOFT</span>
+          <div class="card-row">
+            <div class="card-label">JTBD</div>
+            <div class="card-value">«що подивитись фільм 2024» — перехоплює потребу ще до будь-якого сервісу</div>
+          </div>
+          <div class="card-row">
+            <div class="card-label">Що вивчити</div>
+            <div class="card-value">Які snippets Google показує на ці запити і куди посилає (IMDb, Megogo)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="card-body">
+          <div class="card-name">Telegram-канали про кіно</div>
+          <div class="card-type">Контентні канали UA</div>
+          <span class="card-tag tag-soft">SOFT</span>
+          <div class="card-row">
+            <div class="card-label">JTBD</div>
+            <div class="card-value">Push-рекомендації: постер + рейтинг + 3 рядки опису — push замість pull</div>
+          </div>
+          <div class="card-row">
+            <div class="card-label">Що вивчити</div>
+            <div class="card-value">Формат картки: що саме переконує кликнути — перенести в дизайн картки фільму</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="card-body">
+          <div class="card-name">TikTok / Reels</div>
+          <div class="card-type">Короткий відеоконтент</div>
+          <span class="card-tag tag-soft">SOFT</span>
+          <div class="card-row">
+            <div class="card-label">JTBD</div>
+            <div class="card-value">Молодша аудиторія 12–25 відкриває кіно через #filmstowatch</div>
+          </div>
+          <div class="card-row">
+            <div class="card-label">Що вивчити</div>
+            <div class="card-value">Які атрибути фільму подаються в 15 секунд — мінімальна одиниця інформації для картки</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="card-body">
+          <div class="card-name">JustWatch</div>
+          <div class="card-type">Агрегатор стрімінгів</div>
+          <span class="card-tag tag-aspirational">АСПІРАЦІЙНИЙ</span>
+          <div class="card-row">
+            <div class="card-label">Чому еталон</div>
+            <div class="card-value">Найближчий до Onespace за концепцією — не стримить, показує де є фільм. Найкращі фільтри у категорії</div>
+          </div>
+          <div class="card-row">
+            <div class="card-label">Що вивчити</div>
+            <div class="card-value">Фільтри жанр/рейтинг/платформа/рік, платформа-бейджі, UX картки без перевантаження</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="card-body">
+          <div class="card-name">Letterboxd</div>
+          <div class="card-type">Соціальний кіножурнал</div>
+          <span class="card-tag tag-aspirational">АСПІРАЦІЙНИЙ</span>
+          <div class="card-row">
+            <div class="card-label">Чому еталон</div>
+            <div class="card-value">Еталон dark cinematic UI — саме той стиль, який обрали для Onespace</div>
+          </div>
+          <div class="card-row">
+            <div class="card-label">Що вивчити</div>
+            <div class="card-value">Типографіка і колірні акценти темної теми, постер як головний елемент, hover-стани</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="card-body">
+          <div class="card-name">Rotten Tomatoes</div>
+          <div class="card-type">Агрегатор рецензій</div>
+          <span class="card-tag tag-aspirational">АСПІРАЦІЙНИЙ</span>
+          <div class="card-row">
+            <div class="card-label">Чому еталон</div>
+            <div class="card-value">Еталон подвійного рейтингу (критики + глядачі), є Kids & Family секція</div>
+          </div>
+          <div class="card-row">
+            <div class="card-label">Що вивчити</div>
+            <div class="card-value">Як Kids-секція відрізняється візуально, система Tomatometer як патерн довіри</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <footer style="padding:24px 0 48px;color:var(--muted);font-size:12px">
+    Onespace Research · Зібрано: червень 2026 · Метод: WebFetch + Playwright (Chromium 1440×900) ·
+    <a href="../CLAUDE.md">CLAUDE.md</a> · <a href="research.md">research.md</a>
+  </footer>
+
+</div>
+</body>
+</html>
