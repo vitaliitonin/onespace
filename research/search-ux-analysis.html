@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Onespace — Search UX Analysis</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f0f13;
+      --surface: #1a1a22;
+      --surface2: #22222e;
+      --border: #2e2e3e;
+      --text: #e8e8f0;
+      --muted: #6868a0;
+      --accent: #e8a020;
+      --blue: #5b8af0;
+      --green: #3ecf8e;
+      --red: #f06060;
+      --purple: #a060f0;
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+
+    header { border-bottom: 1px solid var(--border); padding: 28px 0 24px; margin-bottom: 52px; }
+    .header-row { display: flex; align-items: baseline; gap: 14px; }
+    .logo { font-size: 20px; font-weight: 700; color: var(--accent); }
+    .doc-title { font-size: 14px; color: var(--muted); }
+    .dim-badge { display: inline-block; margin-top: 10px; background: rgba(232,160,32,0.12); color: var(--accent); font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.4px; }
+
+    section { margin-bottom: 64px; }
+    h2 { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 28px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    p { color: #a0a0c0; margin-bottom: 10px; font-size: 14px; }
+
+    /* CRITERIA */
+    .criteria-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .criterion {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+    .criterion-num { font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: 0.8px; margin-bottom: 8px; }
+    .criterion-name { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+    .criterion-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    /* PRODUCT CARDS */
+    .products-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 32px; }
+    .product-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .product-screen {
+      width: 100%; height: 140px;
+      object-fit: cover; object-position: top;
+      display: block; border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+    }
+    .no-screen {
+      width: 100%; height: 140px;
+      display: flex; align-items: center; justify-content: center;
+      border-bottom: 1px solid var(--border);
+      font-size: 28px;
+      background: var(--surface2);
+    }
+    .product-body { padding: 14px; }
+    .product-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+    .product-type { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+    .product-why { font-size: 12px; color: #8888aa; }
+
+    /* SCORE TABLE */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      background: var(--surface2);
+      color: var(--muted);
+      font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase;
+      padding: 12px 14px; text-align: left; border: 1px solid var(--border);
+    }
+    th.product-col { color: var(--text); font-size: 12px; letter-spacing: 0; }
+    td { padding: 12px 14px; border: 1px solid var(--border); vertical-align: middle; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .row-criterion { color: var(--text); font-weight: 600; font-size: 12px; background: var(--surface2); white-space: nowrap; }
+    .row-total { background: rgba(232,160,32,0.06); font-weight: 700; }
+    .row-total td { border-top: 2px solid var(--border); }
+
+    /* SCORE PILLS */
+    .score { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; font-weight: 700; font-size: 13px; }
+    .s5 { background: rgba(62,207,142,0.18); color: var(--green); }
+    .s4 { background: rgba(91,138,240,0.18); color: var(--blue); }
+    .s3 { background: rgba(232,160,32,0.18); color: var(--accent); }
+    .s2 { background: rgba(240,96,96,0.15); color: var(--red); }
+    .s1 { background: rgba(240,96,96,0.25); color: var(--red); }
+    .score-total { font-size: 16px; font-weight: 800; color: var(--accent); }
+
+    /* STARS */
+    .stars { color: #555570; font-size: 12px; letter-spacing: 1px; }
+    .stars span { color: var(--accent); }
+
+    /* FINDINGS */
+    .findings-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .win-list { display: flex; flex-direction: column; gap: 12px; }
+    .win-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--green);
+      border-radius: 0 10px 10px 0;
+      padding: 16px 20px;
+    }
+    .lose-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--red);
+      border-radius: 0 10px 10px 0;
+      padding: 20px;
+    }
+    .win-num { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--green); text-transform: uppercase; margin-bottom: 6px; }
+    .lose-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--red); text-transform: uppercase; margin-bottom: 8px; }
+    .win-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .win-source { font-size: 11px; color: var(--muted); margin-top: 8px; }
+    .win-source strong { color: var(--blue); }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+    footer { padding: 24px 0 48px; color: var(--muted); font-size: 12px; }
+    a { color: var(--blue); text-decoration: none; }
+
+    .source-tag {
+      display: inline-block; font-size: 10px; padding: 2px 7px;
+      border-radius: 4px; background: rgba(91,138,240,0.12); color: var(--blue);
+      font-weight: 600; letter-spacing: 0.3px; margin-left: 6px; vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="header-row">
+      <span class="logo">Onespace</span>
+      <span class="doc-title">Search UX Analysis</span>
+    </div>
+    <div><span class="dim-badge">Вимір: Ефективний пошук з побажанням</span></div>
+    <p style="margin-top:12px;font-size:13px;">Не «знайти конкретний фільм», а «знайти щось підходяще» — коли є настрій, вік дитини або жанровий інтерес, але не назва. Який інтерфейс дає найкоротший шлях від побажання до правильного результату?</p>
+  </header>
+
+  <!-- CRITERIA -->
+  <section>
+    <h2>Критерії оцінки — шкала 1–5</h2>
+    <div class="criteria-grid">
+      <div class="criterion">
+        <div class="criterion-num">К1</div>
+        <div class="criterion-name">Швидкість до результату</div>
+        <div class="criterion-desc">Скільки кроків від нульового стану до першого релевантного результату. 5 = результати одразу без дій.</div>
+      </div>
+      <div class="criterion">
+        <div class="criterion-num">К2</div>
+        <div class="criterion-name">Глибина параметрів</div>
+        <div class="criterion-desc">Кількість і якість вимірів фільтрації (жанр, рік, рейтинг, мова, платформа, сертифікат тощо). 5 = 10+ параметрів.</div>
+      </div>
+      <div class="criterion">
+        <div class="criterion-num">К3</div>
+        <div class="criterion-name">Природність побажання</div>
+        <div class="criterion-desc">Чи можна висловити намір природно — мудбординг, іконки, чіпи, NL — замість заповнення форми. 5 = без тексту взагалі.</div>
+      </div>
+      <div class="criterion">
+        <div class="criterion-num">К4</div>
+        <div class="criterion-name">Точність відповідності</div>
+        <div class="criterion-desc">Наскільки результати відповідають побажанню. 5 = кожен результат очевидно релевантний.</div>
+      </div>
+      <div class="criterion">
+        <div class="criterion-num">К5</div>
+        <div class="criterion-name">Ітеративність</div>
+        <div class="criterion-desc">Наскільки швидко результати оновлюються після зміни фільтра. 5 = миттєво, без перезавантаження.</div>
+      </div>
+      <div class="criterion">
+        <div class="criterion-num">К6</div>
+        <div class="criterion-name">Збереження контексту</div>
+        <div class="criterion-desc">Чи пам'ятає система твої уподобання між сесіями. 5 = повна персоналізація на основі історії.</div>
+      </div>
+      <div class="criterion">
+        <div class="criterion-num">К7</div>
+        <div class="criterion-name">Допомога при невизначеності</div>
+        <div class="criterion-desc">Що робить продукт, коли ти не знаєш, чого хочеш. 5 = пресети, підказки, mood-колекції.</div>
+      </div>
+      <div class="criterion">
+        <div class="criterion-num">К8</div>
+        <div class="criterion-name">Читабельність картки результату</div>
+        <div class="criterion-desc">Скільки потрібних сигналів (рейтинг, жанр, рік, постер) видно в картці без кліку. 5 = все одразу.</div>
+      </div>
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- PRODUCTS -->
+  <section>
+    <h2>Best-in-class продукти</h2>
+    <div class="products-grid">
+      <div class="product-card">
+        <img class="product-screen" src="screens/imdb-advanced-search.png" alt="IMDb Advanced Search" />
+        <div class="product-body">
+          <div class="product-name">IMDb Advanced Search</div>
+          <div class="product-type">Кінобаза · параметричний пошук</div>
+          <div class="product-why">Найглибший набір параметрів у категорії. Еталон повноти — і антипатерн UX для широкої аудиторії.</div>
+        </div>
+      </div>
+      <div class="product-card">
+        <img class="product-screen" src="screens/justwatch-discover.png" alt="JustWatch" />
+        <div class="product-body">
+          <div class="product-name">JustWatch</div>
+          <div class="product-type">Агрегатор стрімінгів · discovery</div>
+          <div class="product-why">Найкращий UX фільтрів у movie-категорії. Миттєве оновлення, чіпи жанрів, mood-колекції.</div>
+        </div>
+      </div>
+      <div class="product-card">
+        <img class="product-screen" src="screens/tmdb-discover.png" alt="TMDB Discover" />
+        <div class="product-body">
+          <div class="product-name">TMDB Discover</div>
+          <div class="product-type">Кінобаза · developer-first</div>
+          <div class="product-why">Найбільше параметрів після IMDb, чітка лівостороння панель, live-оновлення. Наш постачальник даних.</div>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="no-screen">🎵</div>
+        <div class="product-body">
+          <div class="product-name">Spotify Search</div>
+          <div class="product-type">Музика · mood-based discovery</div>
+          <div class="product-why">Еталон вираження побажання через настрій і активність. Instant results, персоналізація без форм.</div>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="no-screen">🏠</div>
+        <div class="product-body">
+          <div class="product-name">Airbnb</div>
+          <div class="product-type">Маркетплейс · filter UX еталон</div>
+          <div class="product-why">Найкращий UX категорійних іконок для вираження розмитого наміру. Карта + фільтри = еталон ітеративності.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- SCORE TABLE -->
+  <section>
+    <h2>Оцінки за критеріями</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:220px">Критерій</th>
+            <th class="product-col" style="width:140px">IMDb Adv. Search</th>
+            <th class="product-col" style="width:140px">JustWatch</th>
+            <th class="product-col" style="width:140px">TMDB Discover</th>
+            <th class="product-col" style="width:140px">Spotify</th>
+            <th class="product-col" style="width:140px">Airbnb</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-criterion">К1 · Швидкість до результату</td>
+            <td><span class="score s2">2</span></td>
+            <td><span class="score s4">4</span></td>
+            <td><span class="score s3">3</span></td>
+            <td><span class="score s5">5</span></td>
+            <td><span class="score s5">5</span></td>
+          </tr>
+          <tr>
+            <td class="row-criterion">К2 · Глибина параметрів</td>
+            <td><span class="score s5">5</span></td>
+            <td><span class="score s4">4</span></td>
+            <td><span class="score s5">5</span></td>
+            <td><span class="score s3">3</span></td>
+            <td><span class="score s5">5</span></td>
+          </tr>
+          <tr>
+            <td class="row-criterion">К3 · Природність побажання</td>
+            <td><span class="score s1">1</span></td>
+            <td><span class="score s3">3</span></td>
+            <td><span class="score s2">2</span></td>
+            <td><span class="score s5">5</span></td>
+            <td><span class="score s4">4</span></td>
+          </tr>
+          <tr>
+            <td class="row-criterion">К4 · Точність відповідності</td>
+            <td><span class="score s4">4</span></td>
+            <td><span class="score s4">4</span></td>
+            <td><span class="score s4">4</span></td>
+            <td><span class="score s4">4</span></td>
+            <td><span class="score s4">4</span></td>
+          </tr>
+          <tr>
+            <td class="row-criterion">К5 · Ітеративність</td>
+            <td><span class="score s2">2</span></td>
+            <td><span class="score s5">5</span></td>
+            <td><span class="score s4">4</span></td>
+            <td><span class="score s5">5</span></td>
+            <td><span class="score s5">5</span></td>
+          </tr>
+          <tr>
+            <td class="row-criterion">К6 · Збереження контексту</td>
+            <td><span class="score s1">1</span></td>
+            <td><span class="score s3">3</span></td>
+            <td><span class="score s2">2</span></td>
+            <td><span class="score s5">5</span></td>
+            <td><span class="score s4">4</span></td>
+          </tr>
+          <tr>
+            <td class="row-criterion">К7 · Допомога при невизначеності</td>
+            <td><span class="score s1">1</span></td>
+            <td><span class="score s3">3</span></td>
+            <td><span class="score s2">2</span></td>
+            <td><span class="score s5">5</span></td>
+            <td><span class="score s4">4</span></td>
+          </tr>
+          <tr>
+            <td class="row-criterion">К8 · Читабельність картки</td>
+            <td><span class="score s3">3</span></td>
+            <td><span class="score s4">4</span></td>
+            <td><span class="score s3">3</span></td>
+            <td><span class="score s4">4</span></td>
+            <td><span class="score s5">5</span></td>
+          </tr>
+          <tr class="row-total">
+            <td class="row-criterion">Σ Загальний бал</td>
+            <td><span class="score-total">19</span> <span style="color:var(--muted);font-size:11px">/40</span></td>
+            <td><span class="score-total">30</span> <span style="color:var(--muted);font-size:11px">/40</span></td>
+            <td><span class="score-total">25</span> <span style="color:var(--muted);font-size:11px">/40</span></td>
+            <td><span class="score-total">36</span> <span style="color:var(--muted);font-size:11px">/40</span></td>
+            <td><span class="score-total">36</span> <span style="color:var(--muted);font-size:11px">/40</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:16px;font-size:12px;color:var(--muted);line-height:1.7">
+      <strong style="color:var(--text)">Джерела:</strong>
+      Playwright screenshots (1440×900, Chromium), WebFetch аналіз JustWatch + TMDB, training knowledge для Spotify та Airbnb.
+      IMDb: <a href="https://www.imdb.com/search/title/">imdb.com/search/title</a> ·
+      JustWatch: <a href="https://www.justwatch.com/us/movies">justwatch.com/us/movies</a> ·
+      TMDB: <a href="https://www.themoviedb.org/discover/movie">themoviedb.org/discover/movie</a>
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- FINDINGS -->
+  <section>
+    <h2>Що переносимо в Onespace MVP</h2>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+
+      <!-- TOP 3 WINS -->
+      <div>
+        <h3 style="color:var(--green);font-size:13px;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px">Топ-3 механізми → в наш MVP</h3>
+        <div class="win-list">
+
+          <div class="win-card">
+            <div class="win-num">Механізм 01</div>
+            <div class="win-title">Результати з першого кроку, фільтри — як уточнення</div>
+            <p style="font-size:13px;margin:0">Не порожня форма пошуку, а каталог що одразу показує контент (тренди / топ). Фільтри звужують, а не ініціюють пошук. Користувач починає дивитись — а не заповнювати.</p>
+            <div class="win-source">Взято з: <strong>JustWatch</strong> (К1: 4/5) + <strong>Airbnb</strong> (К1: 5/5)</div>
+          </div>
+
+          <div class="win-card">
+            <div class="win-num">Механізм 02</div>
+            <div class="win-title">Mood-чіпи та preset-колекції над сіткою</div>
+            <p style="font-size:13px;margin:0">Горизонтальний ряд іконок/чіпів: «Для сім'ї», «Мультфільми», «Топ тижня», «Для підлітка», «Щось легке». Один клік — відфільтровано. Вирішує проблему «не знаю чого хочу» без тексту.</p>
+            <div class="win-source">Взято з: <strong>Spotify</strong> mood categories (К7: 5/5) + <strong>Airbnb</strong> icon tabs (К3: 4/5) + <strong>JustWatch</strong> collections (К7: 3/5)</div>
+          </div>
+
+          <div class="win-card">
+            <div class="win-num">Механізм 03</div>
+            <div class="win-title">Живе оновлення результатів без «Пошуку»</div>
+            <p style="font-size:13px;margin:0">Кожна зміна фільтра — миттєве оновлення сітки без перезавантаження сторінки. Відчуття контролю і дослідження замість форми → чекання → результат.</p>
+            <div class="win-source">Взято з: <strong>JustWatch</strong> (К5: 5/5) + <strong>Spotify</strong> (К5: 5/5) + <strong>Airbnb</strong> (К5: 5/5)</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 1 LOSER -->
+      <div>
+        <h3 style="color:var(--red);font-size:13px;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px">1 механізм що НЕ спрацює — і чому</h3>
+        <div class="lose-card" style="height:calc(100% - 40px)">
+          <div class="lose-label">Антипатерн</div>
+          <div class="win-title" style="font-size:17px;margin-bottom:12px">Порожня форма розширеного пошуку (IMDb-підхід)</div>
+          <p style="font-size:13px">IMDb Advanced Search — наймогутніший інструмент у категорії за кількістю параметрів (К2: 5/5), але отримав 19/40 загалом.</p>
+          <p style="font-size:13px">Причина: порожня форма з 15+ полями вимагає, щоб користувач <em>знав, чого хоче</em> ще до взаємодії. Це ломить людей з розмитим наміром — а це 80% аудиторії Onespace 12–60.</p>
+          <p style="font-size:13px">Додатково: кожен перехід — перезавантаження сторінки (К5: 2/5). Після третього уточнення більшість кидають.</p>
+          <p style="font-size:13px;margin-bottom:0"><strong style="color:var(--text)">Висновок для Onespace:</strong> параметри IMDb можна взяти як глибину (К2), але упакувати їх у JustWatch-логіку — результати спочатку, фільтри як звуження. Ніколи не стартувати з порожнього поля.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr />
+
+  <footer>
+    Onespace Search UX Analysis · Червень 2026 · Метод: Playwright (Chromium 1440×900) + WebFetch +
+    domain knowledge · <a href="research-report.html">← Competitor Report</a> · <a href="../CLAUDE.md">CLAUDE.md</a>
+  </footer>
+
+</div>
+</body>
+</html>
