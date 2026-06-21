@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Onespace — IA · Sitemap & Flows</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f13;
+      --surface: #1a1a22;
+      --surface2: #22222e;
+      --border: #2e2e3e;
+      --text: #e8e8f0;
+      --muted: #7878a0;
+      --accent: #e8a020;
+      --blue: #5b8af0;
+      --green: #3ecf8e;
+      --red: #f06060;
+      --purple: #9b6dff;
+      --teal: #2ad4c0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── HEADER ── */
+    header { border-bottom: 1px solid var(--border); padding: 28px 0; margin-bottom: 56px; }
+    .header-inner { display: flex; align-items: baseline; gap: 16px; }
+    .logo { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; color: var(--accent); }
+    .doc-title { font-size: 14px; color: var(--muted); }
+    .meta { margin-top: 8px; font-size: 13px; color: var(--muted); display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+    .nav-links { display: flex; gap: 16px; }
+    .nav-links a { font-size: 13px; color: var(--muted); transition: color .15s; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── SECTIONS ── */
+    section { margin-bottom: 80px; scroll-margin-top: 32px; }
+    h2 {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 28px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+    h4 {
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      margin-bottom: 12px; margin-top: 24px;
+    }
+    p { color: #b0b0cc; margin-bottom: 10px; font-size: 14px; }
+
+    /* ── TAGS ── */
+    .tag {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      padding: 2px 6px; border-radius: 4px; letter-spacing: 0.3px;
+      vertical-align: middle; line-height: 1.5; white-space: nowrap;
+    }
+    .tag-main  { background: rgba(232,160,32,.15); color: var(--accent); border: 1px solid rgba(232,160,32,.3); }
+    .tag-j     { background: rgba(91,138,240,.15);  color: var(--blue);   border: 1px solid rgba(91,138,240,.25); }
+    .tag-e     { background: rgba(42,212,192,.12);  color: var(--teal);   border: 1px solid rgba(42,212,192,.25); }
+    .tag-orphan{ background: rgba(240,96,96,.15);   color: var(--red);    border: 1px solid rgba(240,96,96,.3); }
+    .tag-cond  { background: rgba(232,160,32,.1);   color: var(--accent); border: 1px solid rgba(232,160,32,.25); }
+
+    /* ── SITEMAP TREE ── */
+    .tree-level { margin-bottom: 28px; }
+    .tree-level-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.2px; color: var(--muted); margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .tree-level-label::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .tree-nodes {
+      display: flex; flex-direction: column; gap: 6px;
+      padding-left: 20px; border-left: 2px solid var(--border);
+    }
+    .tree-node {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 11px 16px;
+      position: relative; transition: border-color .15s;
+    }
+    .tree-node::before {
+      content: ''; position: absolute; left: -21px; top: 50%;
+      width: 20px; height: 1px; background: var(--border);
+    }
+    .tree-node.global    { border-color: rgba(91,138,240,.4); }
+    .tree-node.ctx       { border-color: rgba(232,160,32,.3); }
+    .tree-node.deep      { border-color: rgba(42,212,192,.25); }
+    .node-name  { font-size: 14px; font-weight: 600; min-width: 200px; color: var(--text); }
+    .node-jobs  { display: flex; gap: 4px; flex-wrap: wrap; }
+    .node-desc  { font-size: 12px; color: var(--muted); margin-left: auto; text-align: right; max-width: 340px; }
+
+    /* ── DEPTH TABLE ── */
+    .depth-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 4px; }
+    .depth-table th {
+      padding: 9px 14px; background: var(--surface2); color: var(--muted);
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .5px; border: 1px solid var(--border); text-align: left;
+    }
+    .depth-table td { padding: 9px 14px; border: 1px solid var(--border); font-size: 13px; }
+    .depth-table td:first-child { color: #b0b0cc; }
+    .tap-ok    { color: var(--green); font-weight: 700; font-size: 16px; }
+    .tap-limit { color: var(--accent); font-weight: 700; font-size: 16px; }
+    .tap-path  { color: var(--muted); font-size: 12px; font-family: monospace; }
+
+    /* ── FLOW BLOCKS ── */
+    .flow-block { margin-bottom: 48px; }
+    .flow-header {
+      display: flex; align-items: baseline; gap: 14px; margin-bottom: 14px; flex-wrap: wrap;
+    }
+    .flow-title { font-size: 16px; font-weight: 600; color: var(--text); }
+    .flow-meta  { font-size: 12px; color: var(--muted); }
+    .mermaid-wrap {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px 20px; overflow-x: auto;
+    }
+    .mermaid { min-width: 600px; }
+    .mermaid svg { max-width: 100%; display: block; margin: 0 auto; }
+
+    /* ── MATRIX ── */
+    .matrix-wrap { overflow-x: auto; }
+    .matrix-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    .matrix-table th {
+      padding: 9px 10px; background: var(--surface2); color: var(--muted);
+      font-size: 10.5px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .5px; border: 1px solid var(--border);
+      white-space: nowrap; text-align: center;
+    }
+    .matrix-table th:first-child { text-align: left; min-width: 260px; }
+    .matrix-table td {
+      padding: 9px 10px; border: 1px solid var(--border);
+      text-align: center; color: var(--muted);
+    }
+    .matrix-table td:first-child {
+      text-align: left; font-size: 13px; color: var(--text);
+      background: var(--surface); font-weight: 500;
+    }
+    .matrix-table tr:hover td { background: rgba(255,255,255,.02); }
+    .matrix-table tr:hover td:first-child { background: rgba(255,255,255,.03); }
+    .chk  { color: var(--green);  font-size: 15px; }
+    .cond { color: var(--accent); font-size: 14px; }
+    .dash { color: var(--border); }
+    .row-orphan td { background: rgba(240,96,96,.05) !important; }
+    .row-orphan td:first-child {
+      background: rgba(240,96,96,.09) !important;
+      border-left: 3px solid var(--red);
+    }
+    .row-cond td { background: rgba(232,160,32,.03) !important; }
+    .row-cond td:first-child {
+      background: rgba(232,160,32,.07) !important;
+      border-left: 3px solid var(--accent);
+    }
+
+    /* ── LEGEND ── */
+    .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+    .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+    /* ── SUMMARY BOX ── */
+    .summary-box {
+      margin-top: 20px; padding: 18px 22px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; font-size: 13px; line-height: 1.8;
+    }
+    .summary-box strong { color: var(--text); }
+  </style>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        background:          '#0f0f13',
+        primaryColor:        '#22222e',
+        primaryTextColor:    '#e8e8f0',
+        primaryBorderColor:  '#5b8af0',
+        lineColor:           '#7878a0',
+        secondaryColor:      '#22222e',
+        tertiaryColor:       '#2e2e3e',
+        clusterBkg:          '#1a1a22',
+        edgeLabelBackground: '#1a1a22',
+        titleColor:          '#e8e8f0',
+        nodeTextColor:       '#e8e8f0',
+        mainBkg:             '#22222e',
+        nodeBorder:          '#3a3a50',
+        fontFamily:          '-apple-system, BlinkMacSystemFont, Inter, Segoe UI, sans-serif',
+        fontSize:            '13px'
+      },
+      flowchart: { htmlLabels: false, curve: 'basis', padding: 16 }
+    });
+  </script>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="header-inner">
+      <span class="logo">Onespace</span>
+      <span class="doc-title">IA · Sitemap &amp; User Flows</span>
+    </div>
+    <div class="meta">
+      <span>Червень 2026</span>
+      <span>8 екранів · 3 flows · 11 jobs</span>
+      <nav class="nav-links">
+        <a href="#sitemap">Sitemap</a>
+        <a href="#flows">Flows</a>
+        <a href="#matrix">Матриця</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ══════════════════════════════════════════
+       SECTION 1 — SITEMAP
+  ══════════════════════════════════════════ -->
+  <section id="sitemap">
+    <h2>Sitemap — 8 екранів</h2>
+
+    <!-- Global nav -->
+    <div class="tree-level">
+      <div class="tree-level-label">Глобальна навігація — видно завжди</div>
+      <div class="tree-nodes">
+
+        <div class="tree-node global">
+          <span class="node-name">Головна</span>
+          <div class="node-jobs">
+            <span class="tag tag-main">Main</span>
+            <span class="tag tag-j">J4</span>
+            <span class="tag tag-j">J1</span>
+            <span class="tag tag-e">E1</span>
+          </div>
+          <span class="node-desc">Добірки і тренди · стартова точка без запиту · індикатор режиму в хедері</span>
+        </div>
+
+        <div class="tree-node global">
+          <span class="node-name">Пошук</span>
+          <div class="node-jobs">
+            <span class="tag tag-main">Main</span>
+            <span class="tag tag-j">J3</span>
+            <span class="tag tag-j">J1</span>
+            <span class="tag tag-j">J2</span>
+          </div>
+          <span class="node-desc">Текстовий запит + панель фільтрів inline · в дитячому режимі обмежено</span>
+        </div>
+
+        <div class="tree-node global">
+          <span class="node-name">Дітям / Вийти</span>
+          <div class="node-jobs">
+            <span class="tag tag-j">J2</span>
+            <span class="tag tag-e">E1</span>
+          </div>
+          <span class="node-desc">Перемикач режиму · в kids mode стає «Вийти» з іконкою замку → PIN</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Contextual -->
+    <div class="tree-level">
+      <div class="tree-level-label">Контекстна — з'являється в потоці</div>
+      <div class="tree-nodes">
+
+        <div class="tree-node ctx">
+          <span class="node-name">Картка фільму</span>
+          <div class="node-jobs">
+            <span class="tag tag-main">Main</span>
+            <span class="tag tag-j">J1</span>
+            <span class="tag tag-j">J5</span>
+            <span class="tag tag-j">J2</span>
+          </div>
+          <span class="node-desc">Постер · рейтинг IMDb · опис · вікова мітка · [?] OTT посилання (H2)</span>
+        </div>
+
+        <div class="tree-node ctx">
+          <span class="node-name">Повний список добірки</span>
+          <div class="node-jobs">
+            <span class="tag tag-main">Main</span>
+            <span class="tag tag-j">J4</span>
+            <span class="tag tag-j">J1</span>
+          </div>
+          <span class="node-desc">Розкрита добірка за жанром або типом · рейтинг на кожній картці</span>
+        </div>
+
+        <div class="tree-node ctx">
+          <span class="node-name">PIN-екран</span>
+          <div class="node-jobs">
+            <span class="tag tag-j">J2</span>
+            <span class="tag tag-e">E1</span>
+          </div>
+          <span class="node-desc">Введення PIN при вході і виході з дитячого режиму</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Deep -->
+    <div class="tree-level">
+      <div class="tree-level-label">Глибока — рідкісні дії</div>
+      <div class="tree-nodes">
+
+        <div class="tree-node deep">
+          <span class="node-name">Налаштування PIN</span>
+          <div class="node-jobs">
+            <span class="tag tag-j">J2</span>
+            <span class="tag tag-e">E1</span>
+          </div>
+          <span class="node-desc">Перший запуск · вводжу + підтверджую 4–6 цифр · потребує акаунту</span>
+        </div>
+
+        <div class="tree-node deep">
+          <span class="node-name">Реєстрація / Вхід</span>
+          <div class="node-jobs">
+            <span class="tag tag-j">J2</span>
+          </div>
+          <span class="node-desc">Відкладена реєстрація · triggered при налаштуванні PIN · Google або email</span>
+        </div>
+
+        <div class="tree-node deep">
+          <span class="node-name">Налаштування</span>
+          <div class="node-jobs">
+            <span class="tag tag-j">J2</span>
+            <span class="tag tag-e">E1</span>
+          </div>
+          <span class="node-desc">Зміна / скидання PIN через email · управління підпискою</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Depth table -->
+    <h4>Глибина тапів до Main Job (від першого екрана)</h4>
+    <table class="depth-table">
+      <thead>
+        <tr>
+          <th>Сценарій</th>
+          <th style="width:90px;text-align:center;">Персона</th>
+          <th style="width:70px;text-align:center;">Тапи</th>
+          <th>Маршрут</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Дитячий режим вже активний → бачить добірки → тап на мультфільм</td>
+          <td style="text-align:center; color:var(--accent);">Оксана</td>
+          <td style="text-align:center;"><span class="tap-ok">1</span></td>
+          <td class="tap-path">Головна → Картка</td>
+        </tr>
+        <tr>
+          <td>Вмикає дитячий режим (PIN налаштований) → вводить PIN → тап на мультфільм</td>
+          <td style="text-align:center; color:var(--accent);">Оксана</td>
+          <td style="text-align:center;"><span class="tap-ok">2</span></td>
+          <td class="tap-path">«Дітям» → PIN-екран → Головна(діт.) → Картка</td>
+        </tr>
+        <tr>
+          <td>Пошук → фільтри inline → результати → тап на фільм</td>
+          <td style="text-align:center; color:var(--muted);">Оксана / Ірина</td>
+          <td style="text-align:center;"><span class="tap-limit">3</span></td>
+          <td class="tap-path">«Пошук» → [фільтри inline] → Картка</td>
+        </tr>
+        <tr>
+          <td>Відкрив застосунок → бачить тренди → тап на фільм</td>
+          <td style="text-align:center; color:var(--blue);">Дмитро</td>
+          <td style="text-align:center;"><span class="tap-ok">1</span></td>
+          <td class="tap-path">Головна → Картка</td>
+        </tr>
+        <tr>
+          <td>Пошук → текстовий запит → результати → тап</td>
+          <td style="text-align:center; color:var(--teal);">Ірина</td>
+          <td style="text-align:center;"><span class="tap-ok">2</span></td>
+          <td class="tap-path">«Пошук» → [результати] → Картка</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px; font-size:12px; color:var(--muted);">
+      Межа 3 тапи не перевищена в жодному usage-сценарії.
+      Перший запуск (реєстрація + PIN setup) — виняток: це onboarding, не рекуррентний флоу.
+    </p>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       SECTION 2 — FLOWS
+  ══════════════════════════════════════════ -->
+  <section id="flows">
+    <h2>User Flows</h2>
+
+    <!-- MAIN JOB -->
+    <div class="flow-block">
+      <div class="flow-header">
+        <span class="flow-title">Main Job — Знайти фільм і перейти до перегляду</span>
+        <span class="flow-meta">Персони: Оксана · Дмитро · Ірина · два шляхи: browse і search</span>
+      </div>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    START([Відкрив застосунок]) --> HOME[Головна]
+    HOME --> LOAD{Контент завантажився?}
+    LOAD -->|так| FEED[Добірки і тренди на Головній]
+    LOAD -->|збій| ERR[Стан: помилка мережі]
+    ERR --> RETRY[Оновити]
+    RETRY --> HOME
+    FEED --> INTENT{Є конкретна назва або жанр?}
+    INTENT -->|ні - гортаю| BROWSE[Гортаю добірки]
+    INTENT -->|так - шукаю| SEARCH[Пошук]
+    BROWSE --> MORE{Хочу більше одного жанру?}
+    MORE -->|ні| TAP_B[Тап на постер у добірці]
+    MORE -->|так| FULL[Повний список добірки]
+    FULL --> TAP_B
+    SEARCH --> QUERY[Вводжу запит або застосовую фільтри]
+    QUERY --> HAS_R{Є результати?}
+    HAS_R -->|так| TAP_S[Тап на постер у результатах]
+    HAS_R -->|ні| EMPTY[Стан: empty - нічого не знайшлось]
+    EMPTY --> FIX[Змінюю запит або фільтри]
+    FIX --> QUERY
+    EMPTY --> GIVE_UP([Тупик T2: пішов без результату])
+    TAP_B --> CARD[Картка фільму]
+    TAP_S --> CARD
+    CARD --> TRUST{Рейтинг і опис переконали?}
+    TRUST -->|ні - не моє| BACK[Назад до списку]
+    BACK --> BROWSE
+    TRUST -->|так| HAS_OTT{Є посилання на платформу?}
+    HAS_OTT -->|так| OTT([Перехід на зовнішню OTT])
+    HAS_OTT -->|ні| NO_OTT[Стан: OTT недоступно]
+    NO_OTT --> COPY[Копіює назву - шукає самостійно]
+    OTT --> SUCCESS([OK Успіх: дивиться на OTT])
+    COPY --> DEADEND([Тупик T1: вийшов шукати в Google])
+        </div>
+      </div>
+    </div>
+
+    <!-- J2 -->
+    <div class="flow-block">
+      <div class="flow-header">
+        <span class="flow-title">J2 — Безпечний простір для дитини</span>
+        <span class="flow-meta">Персона: Оксана (primary) · три сценарії: setup, вхід, вихід</span>
+      </div>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    START([Оксана хоче дати дитині телефон]) --> HOME[Головна - дорослий режим]
+    HOME --> TAP[Тап Дітям у навігації]
+    TAP --> ISSET{PIN налаштовано?}
+    ISSET -->|ні - перший раз| SETUP[Налаштування PIN]
+    ISSET -->|так| ENTER[PIN-екран: введення]
+    SETUP --> HAS_ACC{Є акаунт?}
+    HAS_ACC -->|ні| REG[Реєстрація / Вхід]
+    REG --> REG_OK{Реєстрація успішна?}
+    REG_OK -->|так| SETUP
+    REG_OK -->|скасувала| NO_ACC([Тупик T3: режим не активний])
+    HAS_ACC -->|так| PIN_IN[Вводжу PIN і підтверджую повторно]
+    PIN_IN --> MATCH{Обидва введення збіглись?}
+    MATCH -->|так| KIDS_HOME[Головна - дитячий режим]
+    MATCH -->|ні| ERR_MATCH[Стан: PIN не збігається]
+    ERR_MATCH --> PIN_IN
+    ENTER --> CHECK{PIN правильний?}
+    CHECK -->|так| KIDS_HOME
+    CHECK -->|ні| ERR_PIN[Стан: неправильний PIN]
+    ERR_PIN --> ATTEMPTS{3 спроби вичерпано?}
+    ATTEMPTS -->|ні| ENTER
+    ATTEMPTS -->|так| BLOCKED[Стан: заблоковано]
+    BLOCKED --> SUPPORT([Тупик T4: звернутись до підтримки])
+    KIDS_HOME --> KIDS_BROWSE[Дитячі добірки на Головній]
+    KIDS_BROWSE --> KIDS_CARD[Картка фільму]
+    KIDS_CARD --> KIDS_OTT([Перехід на зовнішню OTT])
+    KIDS_OTT --> SUCCESS([OK Успіх: дитина дивиться безпечний контент])
+    KIDS_HOME --> EXIT_TAP[Тап Вийти у навігації]
+    EXIT_TAP --> EXIT_PIN[PIN-екран: підтвердження виходу]
+    EXIT_PIN --> EXIT_CHECK{PIN правильний?}
+    EXIT_CHECK -->|так| ADULT[Головна - дорослий режим]
+    EXIT_CHECK -->|ні| EXIT_ERR[Стан: неправильний PIN]
+    EXIT_ERR --> EXIT_PIN
+    EXIT_ERR --> CANCEL[Скасувати вихід]
+    CANCEL --> KIDS_HOME
+    ADULT --> EXIT_OK([OK Успіх: вийшов з дитячого режиму])
+        </div>
+      </div>
+    </div>
+
+    <!-- J3 -->
+    <div class="flow-block">
+      <div class="flow-header">
+        <span class="flow-title">J3 — Звуження без перегляду всього підряд</span>
+        <span class="flow-meta">Персони: Оксана · Ірина · два шляхи: текстовий запит і панель фільтрів</span>
+      </div>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    START([Знаю приблизно що хочу - жанр або рейтинг]) --> SEARCH[Пошук]
+    SEARCH --> MODE{Що вводить?}
+    MODE -->|нічого - щойно відкрила| HINT[Стан: порожній пошук - підказки і популярне]
+    HINT --> MODE
+    MODE -->|назву фільму| TEXT[Вводжу текстовий запит]
+    MODE -->|жанр або рейтинг| FILTERS[Відкриваю панель фільтрів]
+    TEXT --> TEXT_R{Є результати?}
+    TEXT_R -->|так| RESULTS[Список результатів у Пошуку]
+    TEXT_R -->|ні - можлива помилка| SUGGEST[Стан: empty - пропозиція схожих назв]
+    SUGGEST --> FIX[Виправляю запит]
+    FIX --> TEXT
+    SUGGEST --> BAIL_TEXT([Тупик T6a: назва не знайдена - на Головну])
+    FILTERS --> APPLY[Вибираю жанр / рік / рейтинг / вікову категорію]
+    APPLY --> FILTER_R{Є результати?}
+    FILTER_R -->|так| RESULTS
+    FILTER_R -->|ні| EMPTY[Стан: empty - нічого під ці фільтри]
+    EMPTY --> RELAX{Що робить?}
+    RELAX -->|знімає один фільтр| APPLY
+    RELAX -->|скидає всі| SEARCH
+    RELAX -->|кидає| BAIL_FILTER([Тупик T6b: не знайшла - на Головну])
+    RESULTS --> SCAN{Щось підходить?}
+    SCAN -->|так| TAP[Тап на постер]
+    SCAN -->|ні - список не той| CHANGE[Змінюю або додаю фільтр]
+    CHANGE --> APPLY
+    TAP --> CARD[Картка фільму]
+    CARD --> SUCCESS([OK Успіх: знайшла - рейтинг переконав])
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       SECTION 3 — MATRIX
+  ══════════════════════════════════════════ -->
+  <section id="matrix">
+    <h2>Матриця трасування Job → Екран</h2>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--green);"></div>
+        <span>✓ Екран бере участь у закритті job</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--accent);"></div>
+        <span>⚠ Умовно — залежить від рішення по H2 (OTT у MVP)</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:rgba(240,96,96,0.4);"></div>
+        <span>Job-сирота — жодного екрана</span>
+      </div>
+    </div>
+
+    <div class="matrix-wrap">
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>Job</th>
+            <th>Головна</th>
+            <th>Пошук</th>
+            <th>Картка</th>
+            <th>Повний список</th>
+            <th>PIN-екран</th>
+            <th>Нал. PIN</th>
+            <th>Реєстр./Вхід</th>
+            <th>Налашт.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Main</strong> — знайти фільм швидко</td>
+            <td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td>
+            <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+          </tr>
+          <tr>
+            <td><strong>J1</strong> — рейтинг одразу, без переходу</td>
+            <td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td>
+            <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+          </tr>
+          <tr>
+            <td><strong>J2</strong> — безпечний простір для дитини</td>
+            <td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td>
+            <td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td>
+          </tr>
+          <tr>
+            <td><strong>J3</strong> — звузити список не гортаючи</td>
+            <td class="dash">—</td><td class="chk">✓</td><td class="dash">—</td><td class="dash">—</td>
+            <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+          </tr>
+          <tr>
+            <td><strong>J4</strong> — відкрити нове без назви в голові</td>
+            <td class="chk">✓</td><td class="dash">—</td><td class="dash">—</td><td class="chk">✓</td>
+            <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+          </tr>
+          <tr>
+            <td><strong>J5</strong> — довіритись вибору без виходу</td>
+            <td class="dash">—</td><td class="dash">—</td><td class="chk">✓</td><td class="dash">—</td>
+            <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+          </tr>
+          <tr>
+            <td><strong>E1</strong> — відчуття контролю, не тривоги</td>
+            <td class="chk">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+            <td class="chk">✓</td><td class="chk">✓</td><td class="dash">—</td><td class="chk">✓</td>
+          </tr>
+          <tr class="row-cond">
+            <td>
+              <strong>H2</strong> — знати де дивитись (OTT)
+              <span class="tag tag-cond" style="margin-left:6px;">умовно</span>
+            </td>
+            <td class="dash">—</td><td class="dash">—</td><td class="cond">⚠</td><td class="dash">—</td>
+            <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+          </tr>
+          <tr class="row-orphan">
+            <td>
+              <strong>S1/H1</strong> — соціальне підтвердження
+              <span class="tag tag-orphan" style="margin-left:6px;">сирота → backlog</span>
+            </td>
+            <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+            <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+          </tr>
+          <tr class="row-orphan">
+            <td>
+              <strong>H3</strong> — зберегти на потім (watchlist)
+              <span class="tag tag-orphan" style="margin-left:6px;">сирота → backlog</span>
+            </td>
+            <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+            <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+          </tr>
+          <tr class="row-orphan">
+            <td>
+              <strong>H4</strong> — mood як відправна точка
+              <span class="tag tag-orphan" style="margin-left:6px;">сирота → backlog</span>
+            </td>
+            <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+            <td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="summary-box">
+      <strong>Екрани-сироти:</strong>
+      <span style="color:var(--green);">нуль</span> — кожен з 8 екранів покриває ≥1 підтверджений job.
+      <br>
+      <strong>Jobs-сироти:</strong>
+      <span style="color:var(--red);">3 підтверджені</span> (S1/H1, H3, H4) → backlog без екрана до верифікації даними.
+      <br>
+      <strong>Умовний дефект H2:</strong>
+      якщо OTT-посилання входять у MVP — Картка фільму закриває H2 і він виходить з сиріт.
+      Якщо ні — видаляємо з roadmap.
+      <span style="color:var(--accent);">Рішення потрібне до старту wireframing.</span>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>
